@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Couleurs personnalisées */
+.bg-indigo-600 {
+    background-color: #4f46e5;
+}
+.hover\:bg-indigo-700:hover {
+    background-color: #4338ca;
+}
+.text-indigo-600 {
+    color: #4f46e5;
+}
