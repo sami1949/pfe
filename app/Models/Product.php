@@ -14,4 +14,12 @@ class Product extends Model
         'quantity',
         'price',
     ];
+
+    // app/Models/Product.php
+
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorites')
+            ->withTimestamps();
+    }
 }

@@ -129,8 +129,8 @@
             background-position: center;
             display: flex;
             align-items: center;
-            justify-content: center;
-            text-align: center;
+            justify-content: space-around;
+            text-align: start;
             color: white;
         }
         
@@ -154,16 +154,40 @@
         .hero h2 {
             font-size: 3rem;
             font-weight: 700;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1px;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            font-family: 'Playfair Display';
         }
         
         .hero p {
             font-size: 1.25rem;
-            margin-bottom: 2rem;
+            margin-bottom: 25px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-family: 'Playfair Display';
         }
         
+        .hero {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+.hero video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    z-index: 0;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 10;
+}
+
         .shop-now-btn {
             background-color: white;
             color: #333;
@@ -237,7 +261,98 @@
         nav.scrolled .scrolled\:text-black {
     color: black !important;
 }
+
+        /* For the button text */
+nav.scrolled .nav-button {
+    color: black !important;
+}
+
+/* For the SVG icon */
+nav.scrolled .nav-button svg {
+    stroke: black !important;
+}
+
+/* Hover state */
+nav.scrolled .nav-button:hover {
+    color: #333 !important;
+}
+
+nav.scrolled .nav-button:hover svg {
+    stroke: #333 !important;
+}
+
+.products-dropdown {
+            position: relative;
+        }
         
+        .products-dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #f8e8e8;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+            z-index: 100;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        nav.scrolled .products-dropdown-content {
+            background-color: white;
+        }
+        
+        .products-dropdown:hover .products-dropdown-content {
+            display: block;
+        }
+        
+        .products-dropdown-link {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+        }
+        
+        .products-dropdown-link:hover {
+            background-color: #f0f0f0;
+            padding-left: 20px;
+        }
+        
+        /* Update the nav-link styles to accommodate dropdown */
+        .nav-link {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* For mobile dropdown */
+.mobile-products-dropdown {
+    position: relative;
+    display: block;
+}
+
+.mobile-products-dropdown-content {
+    display: none;
+    padding-left: 1rem;
+}
+
+.mobile-products-dropdown:hover .mobile-products-dropdown-content,
+.mobile-products-dropdown:focus-within .mobile-products-dropdown-content {
+    display: block;
+}
+
+/* Style for mobile nav links */
+.mobile-products-dropdown .responsive-nav-link {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: inherit;
+    text-decoration: none;
+}
+
+.mobile-products-dropdown .responsive-nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
         /* Utility classes */
         [x-cloak] { display: none !important; }
     </style>
@@ -250,6 +365,7 @@
                 <div class="flex justify-between items-center h-16">
                     <!-- Logo -->
                     <div class="flex-shrink-0 group logoImgTxt" style="margin-top: 30px;">
+                    @auth
                         <a href="{{ route('welcome') }}" 
                         x-show="logoVisible" 
                         x-transition
@@ -267,15 +383,43 @@
                                 </span>
                             </span>
                         </a>
+                        @else
+                        <a href="{{ route('welcomeWithoutLogin') }}" 
+                        x-show="logoVisible" 
+                        x-transition
+                        class="flex flex-col items-center no-underline">
+                            <div class="relative mb-1">
+                                <div class="absolute inset-0 rounded-full bg-purple-100 blur-md opacity-0 group-hover:opacity-70 transition-all duration-500 -z-10"></div>
+                                <img src="{{ asset('images/logo.png') }}" 
+                                    alt="EleganceVibe Logo" 
+                                    class="logo-img h-16 w-16 rounded-full object-cover border-2 border-white shadow-lg transition-all duration-500 ease-out group-hover:scale-110 group-hover:rotate-3">
+                            </div>
+                            <span class="relative overflow-hidden -mt-1">
+                                <span class="text-xl tracking-wider logo-text" style="font-family: 'Kaushan Script';">
+                                    EleganceVibe
+                                    <span class="absolute lkhat bottom-0 left-0 h-0.5 w-0 group-hover:w-full transition-all duration-700 ease-in-out underline-animation"></span>
+                                </span>
+                            </span>
+                        </a>
+                        @endauth
+
                     </div>
 
                     <!-- Desktop Links -->
                     <div class="hidden md:flex space-x-8">
-                        <x-nav-link href="{{ route('client') }}" 
-                            :active="request()->routeIs('client')" 
-                            class="nav-link font-semibold">
-                            {{ __('Accueil') }}
-                        </x-nav-link>
+                    @auth
+    <x-nav-link href="{{ route('welcome') }}"  
+                :active="request()->routeIs('welcome')" 
+                class="nav-link font-semibold">
+        {{ __('Accueil') }}
+    </x-nav-link>
+@else
+    <x-nav-link href="{{ route('welcomeWithoutLogin') }}" 
+                :active="request()->routeIs('welcomeWithoutLogin')" 
+                class="nav-link font-semibold">
+        {{ __('Accueil') }}
+    </x-nav-link>
+@endauth
                         <x-nav-link href="{{ route('serviceClient') }}" 
                             :active="request()->routeIs('serviceClient')" 
                             class="nav-link font-semibold">
@@ -286,12 +430,52 @@
                             class="nav-link font-semibold">
                             {{ __('Gallerie') }}
                         </x-nav-link>
-                        <x-nav-link 
-                            href="{{ route('productClient') }}" 
-                            :active="request()->routeIs('productClient')" 
-                            class="nav-link font-semibold">  
-                            {{ __("Produits") }}
-                        </x-nav-link>
+                        
+                        <div class="products-dropdown">
+    @auth
+        <x-nav-link 
+            href="{{ route('product.private') }}" 
+            :active="request()->routeIs('product.private')" 
+            class="nav-link font-semibold">  
+            {{ __("Produits") }}
+        </x-nav-link>
+    @else
+        <x-nav-link 
+            href="{{ route('product.public') }}" 
+            :active="request()->routeIs('product.public')" 
+            class="nav-link font-semibold">  
+            {{ __("Produits") }}
+        </x-nav-link>
+    @endauth
+    <div class="products-dropdown-content">
+        @auth
+            <a href="{{ route('product.private', ['category' => 'homme']) }}" class="products-dropdown-link">
+        @else
+            <a href="{{ route('product.public', ['category' => 'homme']) }}" class="products-dropdown-link">
+        @endauth
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Pour Hommes
+            </div>
+        </a>
+        
+        @auth
+            <a href="{{ route('product.private', ['category' => 'femme']) }}" class="products-dropdown-link">
+        @else
+            <a href="{{ route('product.public', ['category' => 'femme']) }}" class="products-dropdown-link">
+        @endauth
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Pour Femmes
+            </div>
+        </a>
+    </div>
+</div>
+
                         <x-nav-link href="{{ route('contactClient') }}" 
                             :active="request()->routeIs('contactClient')" 
                             class="nav-link font-semibold">
@@ -301,6 +485,23 @@
 
                     <!-- Desktop Buttons -->
                     <div class="hidden md:flex items-center space-x-4">
+                        <!-- Cart Icon -->
+                        <div id="cart-icon" class="relative">
+                            @auth
+                            <a href="{{route('cart.indexx')}}" class="text-gray-700 hover:text-teal-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M3 1a1 1 0 000 2h1l.8 3h10.4l.8-3h1a1 1 0 100-2H3zm2.6 6l1.4 5.6A2 2 0 009 14h4a2 2 0 001.9-1.4L16.4 7H5.6zM6 17a1 1 0 102 0 1 1 0 00-2 0zm6 1a1 1 0 100-2 1 1 0 000 2z"/>
+                                </svg>
+                                <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full px-1.5">
+                                0
+
+                                </span>
+                            </a>
+                            @else
+                            <span></span>
+                            @endauth
+                        </div>
+
                         @auth
                         <div x-data="{ open: false }" class="relative ml-6">
                             <button @click="open = !open" 
@@ -396,8 +597,8 @@
                 <!-- Mobile Menu -->
                 <div class="md:hidden mobile-menu" style="margin-top: 20px;" x-show="isOpen" x-cloak @click.away="isOpen = false" x-transition>
                     <div class="px-2 pt-2 pb-3 space-y-1 shadow-lg">
-                        <x-responsive-nav-link href="{{ route('client') }}" 
-                            :active="request()->routeIs('client')" 
+                        <x-responsive-nav-link href="{{ route('welcome') }}" 
+                            :active="request()->routeIs('welcome')" 
                             class="">
                             {{ __('Accueil') }}
                         </x-responsive-nav-link>
@@ -411,12 +612,60 @@
                             class="">
                             {{ __('Gallerie') }}
                         </x-responsive-nav-link>
-                        <x-responsive-nav-link 
-                            href="{{ route('productClient') }}" 
-                            :active="request()->routeIs('productClient')" 
-                            class="">  
-                            {{ __("Produits") }}
-                        </x-responsive-nav-link>
+                        <!-- Mobile version -->
+<div class="mobile-products-dropdown">
+    <x-responsive-nav-link class="font-semibold">
+        {{ __("Produits") }}
+    </x-responsive-nav-link>
+    
+    <div class="mobile-products-dropdown-content">
+        @auth
+            <x-responsive-nav-link href="{{ route('product.private') }}" :active="request()->routeIs('product.private')">
+                Tous les produits
+            </x-responsive-nav-link>
+            
+            <x-responsive-nav-link href="{{ route('product.private', ['category' => 'homme']) }}" :active="request()->routeIs('product.private') && request()->category == 'homme'">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Pour Hommes
+                </div>
+            </x-responsive-nav-link>
+            
+            <x-responsive-nav-link href="{{ route('product.private', ['category' => 'femme']) }}" :active="request()->routeIs('product.private') && request()->category == 'femme'">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Pour Femmes
+                </div>
+            </x-responsive-nav-link>
+        @else
+            <x-responsive-nav-link href="{{ route('product.public') }}" :active="request()->routeIs('product.public')">
+                Tous les produits
+            </x-responsive-nav-link>
+            
+            <x-responsive-nav-link href="{{ route('product.public', ['category' => 'homme']) }}" :active="request()->routeIs('product.public') && request()->category == 'homme'">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Pour Hommes
+                </div>
+            </x-responsive-nav-link>
+            
+            <x-responsive-nav-link href="{{ route('product.public', ['category' => 'femme']) }}" :active="request()->routeIs('product.public') && request()->category == 'femme'">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Pour Femmes
+                </div>
+            </x-responsive-nav-link>
+        @endauth
+    </div>
+</div>
                         <x-responsive-nav-link href="#">
                             {{ __('Contacts') }}
                         </x-responsive-nav-link>
@@ -449,20 +698,26 @@
         </nav>
 
         <!-- Hero Section -->
-        <div class="hero">
-            <div class="hero-content">
-                <h2>Sublimez votre beauté naturelle</h2>
-                <p>Découvrez notre collection soigneusement sélectionnée de soins de la peau et d'essentiels beauté haut de gamme.</p>
-                <a href="{{ route('products.index') }}" class="shop-now-btn">Shop now</a>
-            </div>
-        </div>
+        <!-- Replace your hero div with this video version -->
+<div class="hero">
+    <video autoplay muted loop playsinline class="absolute w-full h-full object-cover">
+        <source src="/images/bgVid.mp4" type="video/mp4">
+        <!-- Fallback image if video can't load -->
+        <img src="/images/fallback-image.jpg" alt="Background fallback">
+    </video>
+    <div class="hero-content" style="margin-top: 120px;">
+        <!-- Your existing hero content -->
+        <h2>Sublimez votre beauté <br> naturelle</h2>
+        <p>Découvrez notre collection soigneusement <br> sélectionnée de soins de la peau et d'essentiels beauté haut de gamme.</p>
+        <a href="" class="shop-now-btn" onclick="smoothScroll()">Shop now</a>
     </div>
-
-    <!-- Main Content -->
-    <div class="content">
-        <!-- Your page content goes here -->
+    <div class="hero-content" style="margin-bottom: 10px">
+        <!-- Your existing hero content -->
+        <h2 style="font-weight: lighter;">Get 10% off <br>of your first order</h2>
     </div>
-
+    
+</div>
+    </div>
     <script>
         // Navbar scroll effect
         window.addEventListener('scroll', function() {
@@ -472,7 +727,14 @@
     } else {
         nav.classList.remove('scrolled');
     }
-});
+    });
+
+    function smoothScroll() {
+        const productsSection = document.getElementById('products');
+        productsSection.scrollIntoView({ 
+        behavior: 'smooth' 
+        });
+    }
     </script>
 </body>
 </html> 
