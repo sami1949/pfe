@@ -260,5 +260,214 @@
             });
         }
     </script>
+        <style>
+        .flip-card {
+            perspective: 1200px;
+        }
+        
+        .flip-card-inner {
+            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+        
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .backface-hidden {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .flip-card-front {
+            z-index: 2;
+            transform: rotateY(0deg);
+        }
+        
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .flip-card {
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .flip-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+
+    <script>
+        function showMoreProducts() {
+            // Show all hidden products with animation
+            const hiddenProducts = document.querySelectorAll('.more-products');
+            hiddenProducts.forEach((product, index) => {
+                setTimeout(() => {
+                    product.classList.remove('hidden');
+                    product.classList.add('animate-fadeIn');
+                }, index * 100);
+            });
+            
+            // Hide the show more button with fade out
+            const button = event.target;
+            button.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+            setTimeout(() => {
+                button.style.display = 'none';
+            }, 300);
+        }
+        
+        function flipCard(button) {
+            const card = button.closest('.flip-card');
+            card.classList.toggle('flipped');
+            
+            // Reset other cards if needed
+            document.querySelectorAll('.flip-card').forEach(otherCard => {
+                if (otherCard !== card) {
+                    otherCard.classList.remove('flipped');
+                }
+            });
+        }
+
+        // Add fadeIn animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fadeIn {
+                animation: fadeIn 0.5s ease-out forwards;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Cart functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartCount();
+        });
+
+        function addToCart(productId, productName, productPrice) {
+            let userId = "{{ auth()->id() ?? 'guest' }}";
+            let cartKey = `cart_${userId}`;
+            let cart = JSON.parse(localStorage.getItem(cartKey)) || {};
+            
+            // Check if product already exists in cart
+            if (cart[productId]) {
+                cart[productId].quantity += 1;
+            } else {
+                cart[productId] = {
+                    id: productId,
+                    name: productName,
+                    price: productPrice,
+                    quantity: 1
+                };
+            }
+            
+            localStorage.setItem(cartKey, JSON.stringify(cart));
+            updateCartCount();
+            
+            // Show notification
+            showNotification(`${productName} added to cart!`);
+        }
+
+        function updateCartCount() {
+            let userId = "{{ auth()->id() ?? 'guest' }}";
+            let cartKey = `cart_${userId}`;
+            let cart = JSON.parse(localStorage.getItem(cartKey)) || {};
+            let totalItems = 0;
+            
+            // Calculate total quantity
+            for (let productId in cart) {
+                totalItems += cart[productId].quantity;
+            }
+            
+            const cartCountElement = document.getElementById('cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = totalItems;
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 bg-teal-600 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-10 opacity-0 transition-all duration-300';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-y-10', 'opacity-0');
+                notification.classList.add('translate-y-0', 'opacity-100');
+            }, 10);
+            
+            // Animate out after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('translate-y-0', 'opacity-100');
+                notification.classList.add('translate-y-10', 'opacity-0');
+                
+                // Remove after animation
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+        initializeCart();
+        updateCartCount();
+    });
+
+    function initializeCart() {
+        let userId = "{{ auth()->id() ?? 'guest' }}";
+        let cartKey = `cart_${userId}`;
+        
+        // Initialize empty cart if it doesn't exist
+        if (!localStorage.getItem(cartKey)) {
+            localStorage.setItem(cartKey, JSON.stringify({}));
+        }
+    }
+
+    function addToCart(productId, productName, productPrice, productImage = null) {
+        // Check if user is authenticated
+        @if(!auth()->check())
+            window.location.href = "{{ route('login') }}";
+            return;
+        @endif
+
+        let userId = "{{ auth()->id() ?? 'guest' }}";
+        let cartKey = `cart_${userId}`;
+        let cart = JSON.parse(localStorage.getItem(cartKey)) || {};
+        
+        // Check if product already exists in cart
+        if (cart[productId]) {
+            cart[productId].quantity += 1;
+        } else {
+            cart[productId] = {
+                id: productId,
+                name: productName,
+                price: productPrice,
+                image: productImage,
+                quantity: 1
+            };
+        }
+        
+        localStorage.setItem(cartKey, JSON.stringify(cart));
+        updateCartCount();
+        showNotification(`${productName} added to cart!`);
+    }
+    </script>
 </body>
 </html>
