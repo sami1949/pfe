@@ -496,7 +496,7 @@ nav.scrolled .nav-scrolled\:text-black {
                         <!-- Cart Icon -->
                         <div id="cart-icon" class="relative">
                         @auth
-                        <a href="{{route('cart.indexx')}}" class="text-[#f8e8e8] hover:text-teal-600 transition-colors duration-300 nav-scrolled:text-black">
+                        <a href="{{ route('cart') }}" class="text-[#f8e8e8] hover:text-teal-600 transition-colors duration-300 nav-scrolled:text-black">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M3 1a1 1 0 000 2h1l.8 3h10.4l.8-3h1a1 1 0 100-2H3zm2.6 6l1.4 5.6A2 2 0 009 14h4a2 2 0 001.9-1.4L16.4 7H5.6zM6 17a1 1 0 102 0 1 1 0 00-2 0zm6 1a1 1 0 100-2 1 1 0 000 2z"/>
                             </svg>

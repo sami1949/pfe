@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -48,15 +49,23 @@ Route::prefix('')->group(function () {
     Route::get('/products', [ProductControllerClient::class, 'index'])
         ->name('client.products.index');
         
-        Route::get('client/products/cart',function (){
-            return view('client.cart.index');
-        })->name('cart.indexx');
         
-    Route::get('client/products/{product}', [ProductControllerClient::class, 'show'])
+        Route::get('client/products/{product}', [ProductControllerClient::class, 'show'])
         ->name('client.products.show');
-});
 
-
+        
+    });
+    
+    
+    Route::get('client/cart', function() {
+    $userId = auth()->id() ?? 'guest';
+    $cartKey = 'cart_'.$userId;
+    $cartItems = json_decode(request()->cookie($cartKey), true) ?? [];
+    
+    return view('client.cart.index', [
+        'cartItems' => $cartItems ?:[]
+    ]);
+    })->name('cart')->middleware('auth');
 
 
 //Souhail est ajouté cette partie🐱‍👤
