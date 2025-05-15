@@ -2,114 +2,134 @@
     <x-slot name="header">
         <div class="container mx-auto px-4">
             <h2 class="font-bold text-2xl md:text-3xl text-gray-800">
-                {{ __('Your Shopping Cart') }}
+                {{ __('Checkout') }}
             </h2>
         </div>
     </x-slot>
 
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Empty Cart State -->
-            <div id="empty-cart" class="{{ count($cartItems) === 0 ? '' : 'hidden' }} text-center py-20">
-                <!-- ... keep the empty cart HTML ... -->
-            </div>
-
-            <!-- Cart with Items -->
-            <div id="cart-with-items" class="{{ count($cartItems) > 0 ? '' : 'hidden' }}">
-                <div class="flex flex-col lg:flex-row gap-8">
-                    <!-- Cart Items -->
-                    <div class="lg:w-2/3">
-                        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Shipping and Payment Info -->
+                <div class="lg:w-2/3">
+                    <form id="checkout-form" action="{{ route('checkout.process') }}" method="POST">
+                        @csrf
+                        
+                        <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
                             <div class="p-6 border-b border-gray-100">
-                                <h3 class="text-lg font-semibold text-gray-800">Your Items ({{ count($cartItems) }})</h3>
+                                <h3 class="text-lg font-semibold text-gray-800">Shipping Information</h3>
                             </div>
                             
-                            <div id="cart-items-container" class="divide-y divide-gray-100">
-                                @foreach($cartItems as $productId => $product)
-                                <div class="cart-item p-6 transition-colors" data-product-id="{{ $productId }}">
-                                    <div class="flex flex-col md:flex-row gap-6">
-                                        <!-- Product Image -->
-                                        <div class="w-full md:w-32 h-32 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
-                                            @if(isset($product['image']))
-                                                <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}" class="w-full h-full object-cover">
-                                            @else
-                                                <div class="w-full h-full flex items-center justify-center text-gray-400">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                    </svg>
-                                                </div>
-                                            @endif
-                                        </div>
-                                        
-                                        <!-- Product Details -->
-                                        <div class="flex-grow">
-                                            <div class="flex justify-between">
-                                                <div>
-                                                    <h4 class="text-lg font-medium text-gray-800">{{ $product['name'] }}</h4>
-                                                    <p class="text-teal-600 font-semibold mt-1">€{{ number_format($product['price'], 2) }}</p>
-                                                </div>
-                                                <button onclick="removeFromCart('{{ $productId }}')" class="delete-btn text-gray-400 hover:text-red-500 h-8 w-8 rounded-full flex items-center justify-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="trash-icon h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                            
-                                            <div class="mt-4 flex items-center justify-between">
-                                                <!-- Quantity Selector -->
-                                                <div class="flex items-center">
-                                                    <button onclick="updateQuantity('{{ $productId }}', -1)" class="quantity-btn rounded-l-lg">-</button>
-                                                    <input type="number" value="{{ $product['quantity'] }}" min="1" 
-                                                        onchange="updateQuantityInput('{{ $productId }}', this)" 
-                                                        class="quantity-input">
-                                                    <button onclick="updateQuantity('{{ $productId }}', 1)" class="quantity-btn rounded-r-lg">+</button>
-                                                </div>
-                                                
-                                                <span class="text-lg font-semibold text-gray-800">€{{ number_format($product['price'] * $product['quantity'], 2) }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="first_name" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                    <input type="text" id="first_name" name="first_name" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500">
                                 </div>
-                                @endforeach
+                                
+                                <div>
+                                    <label for="last_name" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                    <input type="text" id="last_name" name="last_name" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500">
+                                </div>
+                                
+                                <div class="md:col-span-2">
+                                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <input type="email" id="email" name="email" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500">
+                                </div>
+                                
+                                <div class="md:col-span-2">
+                                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                    <input type="tel" id="phone" name="phone" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500">
+                                </div>
+                                
+                                <div class="md:col-span-2">
+                                    <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                                    <input type="text" id="address" name="address" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500">
+                                </div>
+                                
+                                <div>
+                                    <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                                    <input type="text" id="city" name="city" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500">
+                                </div>
+                                
+                                <div>
+                                    <label for="country" class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                                    <input type="text" id="country" name="country" required
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Order Summary -->
-                    <div class="lg:w-1/3">
-                        <div class="bg-white rounded-xl shadow-sm p-6 sticky top-6">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-6">Order Summary</h3>
+                        
+                        <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+                            <div class="p-6 border-b border-gray-100">
+                                <h3 class="text-lg font-semibold text-gray-800">Payment Method</h3>
+                            </div>
                             
-                            <div class="space-y-4">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Subtotal</span>
-                                    <span id="subtotal" class="font-medium">€{{ number_format(array_reduce($cartItems, function($carry, $item) {
-                                        return $carry + ($item['price'] * $item['quantity']);
-                                    }, 0), 2) }}</span>
+                            <div class="p-6">
+                                <div class="space-y-4">
+                                    <div class="flex items-center">
+                                        <input id="credit_card" name="payment_method" type="radio" value="credit_card" checked
+                                            class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300">
+                                        <label for="credit_card" class="ml-3 block text-sm font-medium text-gray-700">
+                                            Credit Card
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="flex items-center">
+                                        <input id="paypal" name="payment_method" type="radio" value="paypal"
+                                            class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300">
+                                        <label for="paypal" class="ml-3 block text-sm font-medium text-gray-700">
+                                            PayPal
+                                        </label>
+                                    </div>
                                 </div>
                                 
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Shipping</span>
-                                    <span class="font-medium text-teal-600">Free</span>
-                                </div>
-                                
-                                <div class="border-t border-gray-200 pt-4 mt-4">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-800 font-semibold">Total</span>
-                                        <span id="total" class="text-xl font-bold text-teal-600">€{{ number_format(array_reduce($cartItems, function($carry, $item) {
-                                            return $carry + ($item['price'] * $item['quantity']);
-                                        }, 0), 2) }}</span>
+                                <!-- Credit Card Fields (shown when credit card is selected) -->
+                                <div id="credit-card-fields" class="mt-6 space-y-4">
+                                    <div>
+                                        <label for="card_number" class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
+                                        <input type="text" id="card_number" name="card_number"
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500"
+                                            placeholder="4242 4242 4242 4242">
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="expiry_date" class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                                            <input type="text" id="expiry_date" name="expiry_date"
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500"
+                                                placeholder="MM/YY">
+                                        </div>
+                                        
+                                        <div>
+                                            <label for="cvc" class="block text-sm font-medium text-gray-700 mb-1">CVC</label>
+                                            <input type="text" id="cvc" name="cvc"
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500"
+                                                placeholder="123">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <button id="checkout-btn" class="mt-8 w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white font-medium py-3 px-6 rounded-lg transition-all shadow-md hover:from-teal-600 hover:to-teal-700 hover:shadow-lg">
-                                Proceed to Checkout
-                            </button>
-                            
-                            <div class="mt-4 text-center text-sm text-gray-500">
-                                or <a href="{{ route('product.private') }}" class="text-teal-600 hover:text-teal-700 font-medium">Continue Shopping</a>
-                            </div>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white font-medium py-3 px-6 rounded-lg transition-all shadow-md hover:from-teal-600 hover:to-teal-700 hover:shadow-lg">
+                            Complete Order
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Order Summary -->
+                <div class="lg:w-1/3">
+                    <div class="bg-white rounded-xl shadow-sm p-6 sticky top-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-6">Order Summary</h3>
+                        
+                        <div id="order-summary" class="space-y-4">
+                            <!-- Cart items will be loaded here via JavaScript -->
                         </div>
                     </div>
                 </div>
@@ -117,96 +137,100 @@
         </div>
     </div>
 
-    <style>
-        .quantity-btn {
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #e5e7eb;
-            background-color: #f9fafb;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .quantity-btn:hover {
-            background-color: #e5e7eb;
-        }
-        
-        .quantity-input {
-            width: 40px;
-            text-align: center;
-            border-top: 1px solid #e5e7eb;
-            border-bottom: 1px solid #e5e7eb;
-            border-left: none;
-            border-right: none;
-            -moz-appearance: textfield;
-        }
-        
-        .quantity-input::-webkit-outer-spin-button,
-        .quantity-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        
-        .delete-btn:hover .trash-icon {
-            transform: scale(1.1);
-        }
-        
-        .trash-icon {
-            transition: transform 0.2s;
-        }
-        
-        .cart-item:hover {
-            background-color: #f9fafb;
-        }
-    </style>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            loadCartItems();
-            // Handle checkout button
-            document.getElementById('checkout-btn').addEventListener('click', function(e) {
+            // Load cart data from sessionStorage
+            const cartData = JSON.parse(sessionStorage.getItem('checkoutCart')) || {};
+            
+            // Update order summary
+            const orderSummaryContainer = document.getElementById('order-summary');
+            let total = 0;
+            
+            // Clear existing items
+            orderSummaryContainer.innerHTML = '';
+            
+            // Add each item from cart
+            for (const [productId, product] of Object.entries(cartData)) {
+                const itemTotal = product.price * product.quantity;
+                total += itemTotal;
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = 'flex justify-between';
+                itemElement.innerHTML = `
+                    <div>
+                        <p class="text-gray-800">${product.name} × ${product.quantity}</p>
+                        <p class="text-sm text-gray-500">One Size</p>
+                    </div>
+                    <span class="text-gray-600">€${itemTotal.toFixed(2)}</span>
+                `;
+                orderSummaryContainer.appendChild(itemElement);
+            }
+            
+            // Add totals section
+            const totalsSection = document.createElement('div');
+            totalsSection.className = 'border-t border-gray-200 pt-4 mt-4';
+            totalsSection.innerHTML = `
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-600">Subtotal</span>
+                    <span class="text-gray-800">€${total.toFixed(2)}</span>
+                </div>
+                
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-600">Shipping</span>
+                    <span class="text-gray-800">Free</span>
+                </div>
+                
+                <div class="flex justify-between font-semibold text-lg mt-4 pt-4 border-t border-gray-200">
+                    <span class="text-gray-800">Total</span>
+                    <span class="text-teal-600">€${total.toFixed(2)}</span>
+                </div>
+            `;
+            orderSummaryContainer.appendChild(totalsSection);
+
+            // Add cart data to form submission
+            const form = document.getElementById('checkout-form');
+            form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                let userId = "{{ auth()->id() ?? 'guest' }}";
-                let cartKey = `cart_${userId}`;
-                let cart = JSON.parse(localStorage.getItem(cartKey)) || {};
+                // Add cart data to form
+                const cartInput = document.createElement('input');
+                cartInput.type = 'hidden';
+                cartInput.name = 'cart_data';
+                cartInput.value = JSON.stringify(cartData);
+                this.appendChild(cartInput);
                 
-                if (Object.keys(cart).length === 0) {
-                    showNotification('Your cart is empty');
-                    return;
-                }
+                // Submit the form
+                this.submit();
+            });
 
-                // Store cart data in sessionStorage before redirecting
-                sessionStorage.setItem('checkoutCart', JSON.stringify(cart));
-                
-                // Redirect to checkout page
-                window.location.href = "{{ route('checkout') }}";
+            // Toggle credit card fields based on payment method
+            const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
+            const creditCardFields = document.getElementById('credit-card-fields');
+            
+            paymentMethods.forEach(method => {
+                method.addEventListener('change', function() {
+                    if (this.value === 'credit_card') {
+                        creditCardFields.classList.remove('hidden');
+                    } else {
+                        creditCardFields.classList.add('hidden');
+                    }
+                });
             });
         });
 
-        function createCheckoutFormAndSubmit(cart) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = "{{ route('checkout.process') }}";
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCartItems();
             
-            const csrf = document.createElement('input');
-            csrf.type = 'hidden';
-            csrf.name = '_token';
-            csrf.value = "{{ csrf_token() }}";
-            form.appendChild(csrf);
+
             
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'cart_data';
-            input.value = JSON.stringify(cart);
-            form.appendChild(input);
-            
-            document.body.appendChild(form);
-            form.submit();
-        }
+            // Handle checkout button
+            document.getElementById('checkout-btn').addEventListener('click', function(e) {
+                //e.preventDefault();
+
+                 // Check if cart is empty
+                window.location.href = "{{ route('checkout') }}";
+            });
+        });
 
         function loadCartItems() {
             let userId = "{{ auth()->id() ?? 'guest' }}";

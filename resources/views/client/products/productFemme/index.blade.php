@@ -17,8 +17,8 @@
                 <div class="flex flex-wrap gap-3 md:gap-6 items-center">
                     @auth
                     <a href="{{ route('product.private') }}" 
-                        class="px-4 py-2 rounded-full transition-all {{ !$category ? 'bg-teal-600 text-white font-medium shadow-md' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200' }}">
-                        Tous les produits
+                       class="px-4 py-2 rounded-full transition-all {{ !$category ? 'bg-teal-600 text-white font-medium shadow-md' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200' }}">
+                       Tous les produits
                     </a>
                     <a href="{{ route('product.private', ['category' => 'homme']) }}" 
                         class="px-4 py-2 rounded-full transition-all {{ $category === 'homme' ? 'bg-teal-600 text-white font-medium shadow-md' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200' }}">

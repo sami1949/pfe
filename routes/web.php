@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -49,11 +50,8 @@ Route::prefix('')->group(function () {
     Route::get('/products', [ProductControllerClient::class, 'index'])
         ->name('client.products.index');
         
-        
         Route::get('client/products/{product}', [ProductControllerClient::class, 'show'])
         ->name('client.products.show');
-
-        
     });
     
     
@@ -68,12 +66,23 @@ Route::prefix('')->group(function () {
     })->name('cart')->middleware('auth');
 
 
+    Route::get('client/cart/checkout', function() {
+    // Initialize empty cart data - the actual data will be loaded via JavaScript
+    return view('client.checkout.index', [
+        'cartItems' => [],
+        'total' => 0
+    ]);
+})->name('checkout')->middleware('auth');
+
+Route::post('client/cart/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+
+
 //Souhail est ajouté cette partie🐱‍👤
 Route::middleware(['auth','admin'])->group(function (){
 
     Route::get('admin/dashboard',[HomeController::class, 'index'])->name('dashboard');
 
-    //Route::get('admin/products',[ProductController::class, 'index'])->name('admin/products');
+    Route::get('admin/products',[ProductController::class, 'index'])->name('admin/products');
 
     Route::get('admin/users',[UsersController::class, 'index'])->name('admin/users');
 
