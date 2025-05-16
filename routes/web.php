@@ -16,6 +16,7 @@ use App\Http\Controllers\galleryControllerClient;
 use App\Http\Controllers\ProductControllerClient;
 use App\Http\Controllers\serviceControllerClient;
 use App\Http\Controllers\welcomController;
+use App\Http\Controllers\MakeupController;
 
 Route::get('/', [welcomController::class, 'index'])->name('welcomeWithoutLogin');
 
@@ -50,8 +51,8 @@ Route::prefix('')->group(function () {
     Route::get('/products', [ProductControllerClient::class, 'index'])
         ->name('client.products.index');
         
-        Route::get('client/products/{product}', [ProductControllerClient::class, 'show'])
-        ->name('client.products.show');
+        //Route::get('client/products/{product}', [ProductControllerClient::class, 'show'])
+        //->name('client.products.show');
     });
     
     
@@ -97,6 +98,16 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::get('/products', [ProductController::class, 'index'])
         ->name('products.index');
 });
+
+
+Route::get('client/products/makeup', [MakeupController::class, 'index'])
+    ->middleware('auth')
+    ->name('client.makeup.index');
+
+Route::get('/products/makeup', [MakeupController::class, 'index'])
+    ->name('public.makeup.index');
+
+
 
 
 require __DIR__.'/auth.php';

@@ -33,7 +33,40 @@ class ProductControllerClient extends Controller
         ]);
     }
 
-    public function show() {
-        return 'hello show';
+    public function publicIndex()
+{
+    return $this->handleProductsView(null, false);
+}
+
+public function publicCategory($category)
+{
+    return $this->handleProductsView($category, false);
+}
+
+public function privateIndex()
+{
+    return $this->handleProductsView(null, true);
+}
+
+public function privateCategory($category)
+{
+    return $this->handleProductsView($category, true);
+}
+
+private function handleProductsView($category, $isPrivate)
+{
+    $products = Product::query();
+    
+    if ($category) {
+        $products = $products->where('category', $category);
     }
+    
+    $products = $products->paginate(12);
+    
+    return view('products.index', [
+        'products' => $products,
+        'category' => $category,
+        'isPrivate' => $isPrivate
+    ]);
+}
 }

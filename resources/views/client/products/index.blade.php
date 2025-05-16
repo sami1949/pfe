@@ -34,7 +34,7 @@
                 <!-- Desktop Category Navigation -->
                 <div class="hidden lg:block">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    @auth
+                    
                         <!-- Main Categories -->
                     <a href="{{ route('product.private') }}" 
                             class="modern-card group {{ !$category ? 'active' : '' }}">
@@ -66,21 +66,41 @@
                                 <p class="card-description">Les dernières tendances beauté</p>
                             </div>
                         </a>
+                        @auth
+    <a href="{{ route('client.makeup.index') }}" 
+       class="modern-card group {{ $category === 'maquillage' ? 'active' : '' }}">
+        <div class="card-blur"></div>
+        <div class="card-content">
+            <div class="card-icon-wrapper">
+                <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                </svg>
+            </div>
+            <h3 class="card-title">Se maquiller</h3>
+            <div class="card-line"></div>
+            <p class="card-description">Produits de maquillage premium</p>
+        </div>
+    </a>
+@else
+    <a href="{{ route('public.makeup.index') }}" 
+       class="modern-card group {{ $category === 'maquillage' ? 'active' : '' }}">
+        <div class="card-blur"></div>
+        <div class="card-content">
+            <div class="card-icon-wrapper">
+                <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                </svg>
+            </div>
+            <h3 class="card-title">Se maquiller</h3>
+            <div class="card-line"></div>
+            <p class="card-description">Produits de maquillage premium</p>
+        </div>
+    </a>
+@endauth
 
-                        <a href="{{ route('product.private', ['category' => 'maquillage']) }}" 
-                            class="modern-card group {{ $category === 'maquillage' ? 'active' : '' }}">
-                            <div class="card-blur"></div>
-                            <div class="card-content">
-                                <div class="card-icon-wrapper">
-                                    <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
-                                    </svg>
-                                </div>
-                                <h3 class="card-title">Se maquiller</h3>
-                                <div class="card-line"></div>
-                                <p class="card-description">Produits de maquillage premium</p>
-                            </div>
-                        </a>
+
 
                         <a href="{{ route('product.private', ['category' => 'skincare']) }}" 
                             class="modern-card group {{ $category === 'skincare' ? 'active' : '' }}">
@@ -136,7 +156,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
                                     </svg>
                                 </div>
-                                <h3 class="card-title">Fragrance</h3>
+                                <h3 class="card-title">Fragranceeeee</h3>
                                 <div class="card-line"></div>
                                 <p class="card-description">Des parfums envoûtants</p>
                             </div>
@@ -172,9 +192,9 @@
                                 <p class="card-description">Marques de luxe</p>
                             </div>
                         </a>
-                        @else
+                        
                         <!-- Repeat the same structure for non-authenticated users but with public routes -->
-                    @endauth
+                    
                     </div>
                 </div>
             </div>
@@ -572,203 +592,233 @@
         .modern-card:hover {
             animation: float 3s ease-in-out infinite;
         }
-        /* Category Navigation Styles */
+        /* ===== Luxury Beauty Category Cards ===== */
 .modern-card {
-    position: relative;
-    overflow: hidden;
-    border-radius: 1.5rem;
-    padding: 2rem;
-    height: 220px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-    cursor: pointer;
-    color: #2d3748;
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-    z-index: 1;
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 10px 25px -5px rgba(0, 0, 0, 0.03),
+    0 5px 15px -5px rgba(0, 0, 0, 0.05),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  z-index: 1;
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
+/* === Ultra-Premium Hover Effect (3D Tilt + Shadow Lift) === */
 .modern-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
+  transform: translateY(-8px) rotateX(2deg) rotateY(1deg);
+  box-shadow: 
+    0 20px 40px -10px rgba(0, 0, 0, 0.1),
+    0 10px 20px -10px rgba(0, 0, 0, 0.08),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.85);
 }
 
+/* === Active State (Like "Selected" in a Luxury Store) === */
 .modern-card.active {
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(210, 180, 140, 0.4); /* Gold-like border */
+  box-shadow: 
+    0 15px 30px -5px rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(210, 180, 140, 0.3); /* Subtle gold inset */
 }
 
-.card-blur {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+/* === Pearl/Gold Accent Glow (On Hover) === */
+.modern-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 235, 205, 0.15) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  z-index: -1;
 }
 
-.modern-card:hover .card-blur {
-    opacity: 1;
+.modern-card:hover::before {
+  opacity: 1;
 }
 
-.card-content {
-    position: relative;
-    z-index: 2;
-}
-
+/* === Couture-Inspired Icon Container (Like a Jewel) === */
 .card-icon-wrapper {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1rem;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.03),
+    inset 0 2px 2px rgba(255, 255, 255, 0.8),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-icon-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  border-radius: 50%;
 }
 
 .modern-card:hover .card-icon-wrapper {
-    transform: scale(1.1);
-    background: rgba(255, 255, 255, 0.95);
+  transform: scale(1.1) translateY(-5px);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.08),
+    inset 0 3px 3px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.card-icon {
-    width: 28px;
-    height: 28px;
-    stroke-width: 1.5;
-    color: #4a5568;
-}
-
+/* === High-End Serif Typography (Editorial Style) === */
 .card-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    color: #2d3748;
-    letter-spacing: -0.5px;
-    transition: all 0.3s ease;
+  font-family: "Playfair Display", serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #2a2118; /* Deep taupe for luxury feel */
+  letter-spacing: 0.5px;
+  transition: all 0.4s ease;
+  position: relative;
+  display: inline-block;
 }
 
 .modern-card:hover .card-title {
-    color: #1a365d;
+  color: #1a1815; /* Even deeper on hover */
 }
 
-.card-line {
-    width: 40px;
-    height: 2px;
-    background: linear-gradient(90deg, rgba(74, 85, 104, 0.2) 0%, rgba(74, 85, 104, 0.5) 50%, rgba(74, 85, 104, 0.2) 100%);
-    margin: 0 auto 0.75rem;
-    transition: all 0.3s ease;
+/* === Floating Underline (Like Perfume Label) === */
+.card-title::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(210, 180, 140, 0.8) 50%,
+    transparent 100%
+  );
+  transition: width 0.4s ease;
 }
 
-.modern-card:hover .card-line {
-    width: 60px;
-    background: linear-gradient(90deg, rgba(45, 55, 72, 0.3) 0%, rgba(45, 55, 72, 0.6) 50%, rgba(45, 55, 72, 0.3) 100%);
+.modern-card:hover .card-title::after {
+  width: 60%;
 }
 
+/* === Micro-Description (Subtle & Elegant) === */
 .card-description {
-    font-size: 0.875rem;
-    color: #4a5568;
-    opacity: 0.9;
-    transition: all 0.3s ease;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 0.9rem;
+  color: #5a534a;
+  opacity: 0.8;
+  letter-spacing: 0.3px;
+  line-height: 1.5;
+  transition: all 0.4s ease;
+  max-width: 80%;
+  margin: 0 auto;
 }
 
 .modern-card:hover .card-description {
-    opacity: 1;
-    color: #2d3748;
+  opacity: 1;
+  color: #4a4238;
 }
 
-/* Special badges */
-.new-badge, .sale-badge {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 0.25rem 0.5rem;
-    border-radius: 9999px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
+/* === "NEW" Badge (Like a Wax Seal) === */
 .new-badge {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  font-family: "Cormorant SC", serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(210, 180, 140, 0.9) 0%,
+    rgba(210, 180, 140, 0.7) 100%
+  );
+  color: #2a2118;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-.sale-badge {
-    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
-    color: white;
-}
-
-/* Special card styles */
+/* === "SALE" Card Special Styling (Luxury Red) === */
 .sale-card {
-    background: rgba(254, 226, 226, 0.6);
-    border: 1px solid rgba(254, 226, 226, 0.4);
+  background: rgba(254, 226, 226, 0.7);
+  border: 1px solid rgba(239, 187, 187, 0.4);
 }
 
 .sale-card:hover {
-    background: rgba(254, 226, 226, 0.8);
+  background: rgba(254, 226, 226, 0.85);
 }
 
-.sale-card .card-icon {
-    color: #e53e3e;
+.sale-badge {
+  background: linear-gradient(
+    135deg,
+    rgba(185, 28, 28, 0.9) 0%,
+    rgba(185, 28, 28, 0.7) 100%
+  );
+  color: white;
+  font-family: "Cormorant SC", serif;
+  letter-spacing: 1px;
 }
 
-.sale-card .card-title {
-    color: #9b2c2c;
-}
-
-.sale-card:hover .card-title {
-    color: #742a2a;
-}
-
-/* Mobile select styles */
-.relative select {
-    transition: all 0.3s ease;
-}
-
-.relative select:focus {
-    box-shadow: 0 0 0 3px rgba(49, 151, 149, 0.2);
-}
-
-/* Responsive adjustments */
+/* ===== Mobile Responsiveness ===== */
 @media (max-width: 1024px) {
-    .modern-card {
-        height: 180px;
-        padding: 1.5rem;
-    }
-    
-    .card-icon-wrapper {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .card-icon {
-        width: 24px;
-        height: 24px;
-    }
-    
-    .card-title {
-        font-size: 1.1rem;
-    }
-    
-    .card-description {
-        font-size: 0.8rem;
-    }
-}
+  .modern-card {
+    height: 220px;
+    padding: 2rem 1.5rem;
+  }
+  
+  .card-icon-wrapper {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .card-title {
+    font-size: 1.2rem;
+  }
+        }
     </style>
 
     <script>
