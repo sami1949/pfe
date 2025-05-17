@@ -37,9 +37,13 @@ return new class extends Migration
             ])->nullable();
             $table->string('brand')->nullable();
             $table->string('quantity');
-            $table->string('description');
+            $table->string('descriptionTitre');
+            $table->string('description1');
+            $table->string('description2');
+            $table->string('description3');
             $table->decimal('price',8,2);
             $table->string('image')->nullable();
+            $table->string('imageToSwitch')->nullable();
             $table->timestamps();
         });
     }

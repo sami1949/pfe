@@ -39,41 +39,37 @@ Route::middleware('auth')->group(function () {
     Route::get('/client/contact',[contactControllerClient::class,"index"])->name('contactClient');
 });
 
-// Public product route (no auth required)
+// Public product routes (no auth required)
 Route::get('/product', [ProductControllerClient::class, "index"])->name('product.public');
+Route::get('/product/{gender?}/{category?}', [ProductControllerClient::class, "index"])
+    ->where(['gender' => 'homme|femme', 'category' => '.*'])
+    ->name('product.public');
 
-// Authenticated product route
-Route::get('/client/products', [ProductControllerClient::class, "index"])
-    ->middleware('auth')
-    ->name('product.private');
-
-Route::prefix('')->group(function () {
-    Route::get('/products', [ProductControllerClient::class, 'index'])
-        ->name('client.products.index');
-        
-        //Route::get('client/products/{product}', [ProductControllerClient::class, 'show'])
-        //->name('client.products.show');
-    });
+// Authenticated product routes
+Route::middleware('auth')->group(function () {
+    Route::get('/client/products', [ProductControllerClient::class, "index"])->name('product.private');
+    Route::get('/client/products/{gender?}/{category?}', [ProductControllerClient::class, "index"])
+        ->where(['gender' => 'homme|femme', 'category' => '.*'])
+        ->name('product.private');
     
-    
+    // Cart routes
     Route::get('client/cart', function() {
-    $userId = auth()->id() ?? 'guest';
-    $cartKey = 'cart_'.$userId;
-    $cartItems = json_decode(request()->cookie($cartKey), true) ?? [];
-    
-    return view('client.cart.index', [
-        'cartItems' => $cartItems ?:[]
-    ]);
-    })->name('cart')->middleware('auth');
-
+        $userId = auth()->id() ?? 'guest';
+        $cartKey = 'cart_'.$userId;
+        $cartItems = json_decode(request()->cookie($cartKey), true) ?? [];
+        
+        return view('client.cart.index', [
+            'cartItems' => $cartItems ?: []
+        ]);
+    })->name('cart');
 
     Route::get('client/cart/checkout', function() {
-    // Initialize empty cart data - the actual data will be loaded via JavaScript
-    return view('client.checkout.index', [
-        'cartItems' => [],
-        'total' => 0
-    ]);
-})->name('checkout')->middleware('auth');
+        return view('client.checkout.index', [
+            'cartItems' => [],
+            'total' => 0
+        ]);
+    })->name('checkout');
+});
 
 Route::post('client/cart/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
 

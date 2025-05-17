@@ -9,8 +9,9 @@ class ProductControllerClient extends Controller
 {
     public function index(Request $request)
     {
-        $gender = $request->query('gender', Product::GENDER_FEMME);
-        $category = $request->query('category');
+        // Get parameters from route or query string
+        $gender = $request->route('gender') ?? $request->query('gender', Product::GENDER_FEMME);
+        $category = $request->route('category') ?? $request->query('category');
         $page = $request->query('page', 1);
         $perPage = 6;
 
@@ -51,6 +52,16 @@ class ProductControllerClient extends Controller
             'hasMore' => ($page * $perPage) < $total,
             'currentPage' => $page
         ]);
+    }
+
+    public function addToCart(Request $request)
+    {
+        // Only authenticated users can add to cart
+        if (!auth()->check()) {
+            return response()->json(['error' => 'Please login to add items to cart'], 401);
+        }
+
+        // Rest of add to cart logic
     }
 
     public function publicIndex()

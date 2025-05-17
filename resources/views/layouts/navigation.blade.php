@@ -457,9 +457,9 @@ nav.scrolled .nav-scrolled\:text-black {
     @endauth
     <div class="products-dropdown-content">
         @auth
-            <a href="{{ route('product.private', ['category' => 'homme']) }}" class="products-dropdown-link">
+            <a href="{{ route('product.private', ['gender' => 'homme']) }}" class="products-dropdown-link">
         @else
-            <a href="{{ route('product.public', ['category' => 'homme']) }}" class="products-dropdown-link">
+            <a href="{{ route('product.public', ['gender' => 'homme']) }}" class="products-dropdown-link">
         @endauth
             <div class="flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -470,9 +470,9 @@ nav.scrolled .nav-scrolled\:text-black {
         </a>
         
         @auth
-            <a href="{{ route('product.private', ['category' => 'femme']) }}" class="products-dropdown-link">
+            <a href="{{ route('product.private', ['gender' => 'femme']) }}" class="products-dropdown-link">
         @else
-            <a href="{{ route('product.public', ['category' => 'femme']) }}" class="products-dropdown-link">
+            <a href="{{ route('product.public', ['gender' => 'femme']) }}" class="products-dropdown-link">
         @endauth
             <div class="flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -631,7 +631,7 @@ nav.scrolled .nav-scrolled\:text-black {
                 Tous les produits
             </x-responsive-nav-link>
             
-            <x-responsive-nav-link href="{{ route('product.private', ['category' => 'homme']) }}" :active="request()->routeIs('product.private') && request()->category == 'homme'">
+            <x-responsive-nav-link href="{{ route('product.private', ['gender' => 'homme']) }}" :active="request()->routeIs('product.private') && request()->gender == 'homme'">
                 <div class="flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -640,7 +640,7 @@ nav.scrolled .nav-scrolled\:text-black {
                 </div>
             </x-responsive-nav-link>
             
-            <x-responsive-nav-link href="{{ route('product.private', ['category' => 'femme']) }}" :active="request()->routeIs('product.private') && request()->category == 'femme'">
+            <x-responsive-nav-link href="{{ route('product.private', ['gender' => 'femme']) }}" :active="request()->routeIs('product.private') && request()->gender == 'femme'">
                 <div class="flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -653,7 +653,7 @@ nav.scrolled .nav-scrolled\:text-black {
                 Tous les produits
             </x-responsive-nav-link>
             
-            <x-responsive-nav-link href="{{ route('product.public', ['category' => 'homme']) }}" :active="request()->routeIs('product.public') && request()->category == 'homme'">
+            <x-responsive-nav-link href="{{ route('product.public', ['gender' => 'homme']) }}" :active="request()->routeIs('product.public') && request()->gender == 'homme'">
                 <div class="flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -662,7 +662,7 @@ nav.scrolled .nav-scrolled\:text-black {
                 </div>
             </x-responsive-nav-link>
             
-            <x-responsive-nav-link href="{{ route('product.public', ['category' => 'femme']) }}" :active="request()->routeIs('product.public') && request()->category == 'femme'">
+            <x-responsive-nav-link href="{{ route('product.public', ['gender' => 'femme']) }}" :active="request()->routeIs('product.public') && request()->gender == 'femme'">
                 <div class="flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
