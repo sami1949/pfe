@@ -21,5 +21,9 @@ class DatabaseSeeder extends Seeder
             'usertype'=>'admin',
             'password'=> 'admin123',
         ]);
+
+        $this->call([
+            ProductSeeder::class
+        ]);
     }
 }

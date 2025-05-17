@@ -8,14 +8,90 @@ class Product extends Model
 {
     use HasFactory;
     protected $table = 'products';
-    protected $fillable =[
-        'title',
+    
+    // Define constants for genders
+    const GENDER_FEMME = 'femme';
+    const GENDER_HOMME = 'homme';
+    
+    // Define constants for categories
+    const CATEGORY_NOUVEAU = 'nouveau';
+    const CATEGORY_MAQUILLAGE = 'se_maquiller';
+    const CATEGORY_SKINCARE = 'skin_care';
+    const CATEGORY_CORPS = 'soin_du_corps';
+    const CATEGORY_CHEVEUX = 'soin_des_cheveux';
+    const CATEGORY_FRAGRANCE = 'fragrance';
+    const CATEGORY_VENTE = 'vente';
+    const CATEGORY_BRANDS = 'brands';
+
+    // Define constants for subcategories
+    const SUBCATEGORY_FACE = 'face';
+    const SUBCATEGORY_LIPS = 'lips';
+    const SUBCATEGORY_EYES = 'eyes';
+    const SUBCATEGORY_MAKEUP_TOOL = 'makeup_tool';
+    
+    // Fragrance subcategories
+    const SUBCATEGORY_ALL_FRAGRANCE = 'all_fragrance';
+    const SUBCATEGORY_PERFUMES = 'perfumes';
+    const SUBCATEGORY_MISTS = 'mists';
+    const SUBCATEGORY_SETS = 'sets';
+
+    // Brands
+    const BRAND_ELF = 'e.l.f Cosmetics';
+    const BRAND_NYX = 'NYX Professional Makeup';
+    
+    protected $fillable = [
+        'name',
+        'gender',
         'category',
+        'subcategory',
+        'brand',
         'quantity',
+        'description',
         'price',
+        'image'
     ];
 
-    // app/Models/Product.php
+    // Get categories by gender
+    public static function getCategoriesByGender($gender)
+    {
+        $allCategories = [
+            self::CATEGORY_NOUVEAU => 'Nouveau',
+            self::CATEGORY_MAQUILLAGE => 'Se maquiller',
+            self::CATEGORY_SKINCARE => 'Skin Care',
+            self::CATEGORY_CORPS => 'Soin du corps',
+            self::CATEGORY_CHEVEUX => 'Soin des cheveux',
+            self::CATEGORY_FRAGRANCE => 'Fragrance',
+            self::CATEGORY_VENTE => 'VENTE',
+            self::CATEGORY_BRANDS => 'Brands'
+        ];
+
+        return $allCategories;
+    }
+
+    // Get subcategories by category
+    public static function getSubcategoriesByCategory($category)
+    {
+        $subcategories = [
+            self::CATEGORY_MAQUILLAGE => [
+                self::SUBCATEGORY_FACE => 'Face',
+                self::SUBCATEGORY_LIPS => 'Lips',
+                self::SUBCATEGORY_EYES => 'Eyes',
+                self::SUBCATEGORY_MAKEUP_TOOL => 'Makeup Tools'
+            ],
+            self::CATEGORY_FRAGRANCE => [
+                self::SUBCATEGORY_ALL_FRAGRANCE => 'All Fragrance',
+                self::SUBCATEGORY_PERFUMES => 'Perfumes',
+                self::SUBCATEGORY_MISTS => 'Mists',
+                self::SUBCATEGORY_SETS => 'Sets'
+            ],
+            self::CATEGORY_BRANDS => [
+                self::BRAND_ELF => 'e.l.f Cosmetics',
+                self::BRAND_NYX => 'NYX Professional Makeup'
+            ]
+        ];
+
+        return $subcategories[$category] ?? [];
+    }
 
     public function favoritedBy()
     {

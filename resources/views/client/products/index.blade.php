@@ -3,8 +3,8 @@
         <div class="container mx-auto px-4">
             <h2 class="font-bold text-2xl md:text-3xl text-gray-800">
                 {{ __('Nos Produits') }} 
-                @if($category)
-                    <span class="text-teal-600">- {{ ucfirst($category) }}</span>
+                @if($currentGender)
+                    <span class="text-teal-600">- {{ ucfirst($currentGender) }}</span>
                 @endif
             </h2>
         </div>
@@ -12,406 +12,72 @@
 
     <div class="py-12 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Gender Navigation -->
+            <div class="mb-8">
+                <div class="flex flex-wrap gap-3 justify-center">
+                    <a href="{{ route('product.private', ['gender' => 'femme']) }}" 
+                       class="px-6 py-3 rounded-full text-lg transition-all {{ $currentGender === 'femme' ? 'bg-teal-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200' }}">
+                        Pour Femmes
+                    </a>
+                    <a href="{{ route('product.private', ['gender' => 'homme']) }}" 
+                       class="px-6 py-3 rounded-full text-lg transition-all {{ $currentGender === 'homme' ? 'bg-teal-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200' }}">
+                        Pour Hommes
+                    </a>
+                </div>
+            </div>
+
             <!-- Category Navigation -->
             <div class="mb-12">
-                <!-- Mobile Category Navigation -->
-                <div class="lg:hidden">
-                    <div class="relative">
-                        <select onchange="window.location.href=this.value" class="w-full appearance-none bg-white/80 backdrop-blur-xl px-4 py-3 rounded-2xl border border-white/20 text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent pr-12 shadow-lg">
-                            <option value="{{ auth()->check() ? route('product.private') : route('product.public') }}" {{ !$category ? 'selected' : '' }}>Tous les produits</option>
-                            <option value="{{ auth()->check() ? route('product.private', ['category' => 'nouveau']) : route('product.public', ['category' => 'nouveau']) }}" {{ $category === 'nouveau' ? 'selected' : '' }}>Nouveau</option>
-                            <option value="{{ auth()->check() ? route('product.private', ['category' => 'maquillage']) : route('product.public', ['category' => 'maquillage']) }}" {{ $category === 'maquillage' ? 'selected' : '' }}>Se maquiller</option>
-                            <option value="{{ auth()->check() ? route('product.private', ['category' => 'skincare']) : route('product.public', ['category' => 'skincare']) }}" {{ $category === 'skincare' ? 'selected' : '' }}>Skin Care</option>
-                            <option value="{{ auth()->check() ? route('product.private', ['category' => 'corps']) : route('product.public', ['category' => 'corps']) }}" {{ $category === 'corps' ? 'selected' : '' }}>Soin du corps</option>
-                            <option value="{{ auth()->check() ? route('product.private', ['category' => 'cheveux']) : route('product.public', ['category' => 'cheveux']) }}" {{ $category === 'cheveux' ? 'selected' : '' }}>Soin des cheveux</option>
-                            <option value="{{ auth()->check() ? route('product.private', ['category' => 'fragrance']) : route('product.public', ['category' => 'fragrance']) }}" {{ $category === 'fragrance' ? 'selected' : '' }}>Fragrance</option>
-                            <option value="{{ auth()->check() ? route('product.private', ['category' => 'vente']) : route('product.public', ['category' => 'vente']) }}" {{ $category === 'vente' ? 'selected' : '' }}>VENTE</option>
-                            <option value="{{ auth()->check() ? route('product.private', ['category' => 'brands']) : route('product.public', ['category' => 'brands']) }}" {{ $category === 'brands' ? 'selected' : '' }}>Brands</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Desktop Category Navigation -->
-                <div class="hidden lg:block">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    
-                        <!-- Main Categories -->
-                    <a href="{{ route('product.private') }}" 
-                            class="modern-card group {{ !$category ? 'active' : '' }}">
-                            <div class="card-blur"></div>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    @foreach($categories as $categoryKey => $categoryName)
+                        <a href="{{ route('product.private', ['gender' => $currentGender, 'category' => $categoryKey]) }}" 
+                           class="modern-card group {{ $category === $categoryKey ? 'active' : '' }}">
                             <div class="card-content">
-                                <div class="card-icon-wrapper">
-                                    <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                                    </svg>
-                                </div>
-                                <h3 class="card-title">Tous les produits</h3>
+                                <h3 class="card-title">{{ $categoryName }}</h3>
                                 <div class="card-line"></div>
-                                <p class="card-description">Découvrez notre collection complète</p>
                             </div>
                         </a>
-
-                        <a href="{{ route('product.private', ['category' => 'nouveau']) }}" 
-                            class="modern-card group {{ $category === 'nouveau' ? 'active' : '' }}">
-                            <div class="card-blur"></div>
-                            <div class="card-content">
-                                <div class="new-badge">NEW</div>
-                                <div class="card-icon-wrapper">
-                                    <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                    </svg>
-                                </div>
-                                <h3 class="card-title">Nouveautés</h3>
-                                <div class="card-line"></div>
-                                <p class="card-description">Les dernières tendances beauté</p>
-                            </div>
-                        </a>
-                        @auth
-    <a href="{{ route('client.makeup.index') }}" 
-       class="modern-card group {{ $category === 'maquillage' ? 'active' : '' }}">
-        <div class="card-blur"></div>
-        <div class="card-content">
-            <div class="card-icon-wrapper">
-                <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                          d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                </svg>
-            </div>
-            <h3 class="card-title">Se maquiller</h3>
-            <div class="card-line"></div>
-            <p class="card-description">Produits de maquillage premium</p>
-        </div>
-    </a>
-@else
-    <a href="{{ route('public.makeup.index') }}" 
-       class="modern-card group {{ $category === 'maquillage' ? 'active' : '' }}">
-        <div class="card-blur"></div>
-        <div class="card-content">
-            <div class="card-icon-wrapper">
-                <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                          d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                </svg>
-            </div>
-            <h3 class="card-title">Se maquiller</h3>
-            <div class="card-line"></div>
-            <p class="card-description">Produits de maquillage premium</p>
-        </div>
-    </a>
-@endauth
-
-
-
-                        <a href="{{ route('product.private', ['category' => 'skincare']) }}" 
-                            class="modern-card group {{ $category === 'skincare' ? 'active' : '' }}">
-                            <div class="card-blur"></div>
-                            <div class="card-content">
-                                <div class="card-icon-wrapper">
-                                    <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                    </svg>
-                                </div>
-                                <h3 class="card-title">Skin Care</h3>
-                                <div class="card-line"></div>
-                                <p class="card-description">Prenez soin de votre peau</p>
-                            </div>
-                        </a>
-
-                        <a href="{{ route('product.private', ['category' => 'corps']) }}" 
-                            class="modern-card group {{ $category === 'corps' ? 'active' : '' }}">
-                            <div class="card-blur"></div>
-                            <div class="card-content">
-                                <div class="card-icon-wrapper">
-                                    <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                    </svg>
-                                </div>
-                                <h3 class="card-title">Soin du corps</h3>
-                                <div class="card-line"></div>
-                                <p class="card-description">Une peau douce et hydratée</p>
-                            </div>
-                        </a>
-
-                        <a href="{{ route('product.private', ['category' => 'cheveux']) }}" 
-                            class="modern-card group {{ $category === 'cheveux' ? 'active' : '' }}">
-                            <div class="card-blur"></div>
-                            <div class="card-content">
-                                <div class="card-icon-wrapper">
-                                    <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                                <h3 class="card-title">Soin des cheveux</h3>
-                                <div class="card-line"></div>
-                                <p class="card-description">Des cheveux brillants et sains</p>
-                            </div>
-                        </a>
-
-                        <a href="{{ route('product.private', ['category' => 'fragrance']) }}" 
-                            class="modern-card group {{ $category === 'fragrance' ? 'active' : '' }}">
-                            <div class="card-blur"></div>
-                            <div class="card-content">
-                                <div class="card-icon-wrapper">
-                                    <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-                                    </svg>
-                                </div>
-                                <h3 class="card-title">Fragranceeeee</h3>
-                                <div class="card-line"></div>
-                                <p class="card-description">Des parfums envoûtants</p>
-                            </div>
-                        </a>
-
-                        <a href="{{ route('product.private', ['category' => 'vente']) }}" 
-                            class="modern-card sale-card group {{ $category === 'vente' ? 'active' : '' }}">
-                            <div class="card-blur"></div>
-                            <div class="card-content">
-                                <div class="sale-badge">-20%</div>
-                                <div class="card-icon-wrapper">
-                                    <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                    </svg>
-                                </div>
-                                <h3 class="card-title">VENTE</h3>
-                                <div class="card-line"></div>
-                                <p class="card-description">Offres exceptionnelles</p>
-                            </div>
-                        </a>
-
-                        <a href="{{ route('product.private', ['category' => 'brands']) }}" 
-                            class="modern-card group {{ $category === 'brands' ? 'active' : '' }}">
-                            <div class="card-blur"></div>
-                            <div class="card-content">
-                                <div class="card-icon-wrapper">
-                                    <svg class="card-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-                                    </svg>
-                                </div>
-                                <h3 class="card-title">Brands</h3>
-                                <div class="card-line"></div>
-                                <p class="card-description">Marques de luxe</p>
-                            </div>
-                        </a>
-                        
-                        <!-- Repeat the same structure for non-authenticated users but with public routes -->
-                    
-                    </div>
+                    @endforeach
                 </div>
             </div>
 
-            <!-- Products grid -->
+            <!-- Products Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="products-container">
-                @foreach($randomProducts as $product)
-                <div class="flip-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-[28rem] relative group">
-                    <div class="flip-card-inner relative w-full h-full">
-                        <!-- Front of the card -->
-                        <div class="flip-card-front absolute w-full h-full p-6 backface-hidden flex flex-col">
+                @foreach($products as $product)
+                    <div class="product-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-[28rem] relative group">
+                        <div class="product-image-container h-64 overflow-hidden">
                             @if($product->image)
-                            <div class="relative overflow-hidden rounded-xl h-56 mb-4 group">
                                 <img src="{{ asset('storage/' . $product->image) }}" 
-                                    alt="{{ $product->name }}"
-                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/20 to-transparent"></div>
-                            </div>
+                                     alt="{{ $product->name }}" 
+                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                             @endif
-                            
-                            <h3 class="text-xl font-bold text-gray-800">{{ $product->name }}</h3>
-                            <p class="text-gray-600 mt-2 line-clamp-2 flex-grow">{{ $product->description }}</p>
-                            
-                            <div class="mt-4 flex justify-between items-center pt-4">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $product->name }}</h3>
+                            <p class="text-gray-600 mt-2 line-clamp-2">{{ $product->description }}</p>
+                            <div class="mt-4 flex justify-between items-center">
                                 <span class="text-2xl font-bold text-teal-600">{{ number_format($product->price, 2) }}€</span>
-                                <button onclick="flipCard(this)" 
-                                class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-5 py-2 rounded-xl hover:from-teal-600 hover:to-teal-700 transition-all shadow-md hover:shadow-teal-200 flex items-center">
-                                    Details
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                <button onclick="addToCart('{{ $product->id }}', '{{ $product->name }}', {{ $product->price }}, '{{ $product->image }}')" 
+                                        class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg transition-colors duration-300 flex items-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                     </svg>
+                                    Add to Cart
                                 </button>
                             </div>
                         </div>
-                        
-                        <!-- Back of the card -->
-                        <div class="flip-card-back absolute w-full h-full p-6 backface-hidden bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
-                            <div class="h-full flex flex-col">
-                                <h3 class="text-xl font-bold text-gray-800 mb-4">{{ $product->name }}</h3>
-                                
-                                <div class="space-y-3 flex-grow">
-                                    <div class="flex items-start bg-white p-3 rounded-lg shadow-sm">
-                                        <div class="bg-teal-100 p-1 rounded-full mr-3">
-                                            <svg class="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-medium text-gray-800">Premium Quality</h4>
-                                            <p class="text-sm text-gray-500 mt-1">Made with finest materials</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="flex items-start bg-white p-3 rounded-lg shadow-sm">
-                                        <div class="bg-teal-100 p-1 rounded-full mr-3">
-                                            <svg class="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-medium text-gray-800">Comfort Fit</h4>
-                                            <p class="text-sm text-gray-500 mt-1">Designed for all-day wear</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="flex items-start bg-white p-3 rounded-lg shadow-sm">
-                                        <div class="bg-teal-100 p-1 rounded-full mr-3">
-                                            <svg class="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-medium text-gray-800">Eco-Friendly</h4>
-                                            <p class="text-sm text-gray-500 mt-1">Sustainable production</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="mt-6 flex justify-between items-center pt-4 border-t border-gray-200">
-                                    <span class="text-2xl font-bold text-teal-600">{{ number_format($product->price, 2) }}€</span>
-                                    <div class="flex space-x-3">
-                                        <button onclick="flipCard(this)" 
-                                        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl hover:bg-gray-300 transition-all flex items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                            </svg>
-                                            Back
-                                        </button>
-                                        <button onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }}, '{{ asset('storage/' . $product->image) }}')" 
-                                            class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-5 py-2 rounded-xl hover:from-teal-600 hover:to-teal-700 transition-all shadow-md hover:shadow-teal-200 flex items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                                <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-                                            </svg>
-                                            Add to Cart
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                </div>
-                @endforeach
-
-                <!-- Remaining products (hidden by default) -->
-                @foreach($remainingProducts as $product)
-                <div class="flip-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 h-[28rem] relative group hidden more-products">
-                    <div class="flip-card-inner relative w-full h-full">
-                        <!-- Front of the card -->
-                        <div class="flip-card-front absolute w-full h-full p-6 backface-hidden flex flex-col">
-                            @if($product->image)
-                            <div class="relative overflow-hidden rounded-xl h-56 mb-4 group">
-                                <img src="{{ asset('storage/' . $product->image) }}" 
-                                    alt="{{ $product->name }}"
-                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/20 to-transparent"></div>
-                            </div>
-                            @endif
-                            
-                            <h3 class="text-xl font-bold text-gray-800">{{ $product->name }}</h3>
-                            <p class="text-gray-600 mt-2 line-clamp-2 flex-grow">{{ $product->description }}</p>
-                            
-                            <div class="mt-4 flex justify-between items-center pt-4">
-                                <span class="text-2xl font-bold text-teal-600">{{ number_format($product->price, 2) }}€</span>
-                                <button onclick="flipCard(this)" 
-                                class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-5 py-2 rounded-xl hover:from-teal-600 hover:to-teal-700 transition-all shadow-md hover:shadow-teal-200 flex items-center">
-                                    Details
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Back of the card -->
-                        <div class="flip-card-back absolute w-full h-full p-6 backface-hidden bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
-                            <div class="h-full flex flex-col">
-                                <h3 class="text-xl font-bold text-gray-800 mb-4">{{ $product->name }}</h3>
-                                
-                                <!-- Product description -->
-                                <div class="mb-4 p-3 bg-white rounded-lg shadow-sm">
-                                    <h4 class="font-medium text-gray-800">Description</h4>
-                                    <p class="text-gray-600 mt-1">{{ $product->description }}</p>
-                                </div>
-                                
-                                <!-- Features section -->
-                                <div class="space-y-3 flex-grow">
-                                    <div class="flex items-start bg-white p-3 rounded-lg shadow-sm">
-                                        <div class="bg-teal-100 p-1 rounded-full mr-3">
-                                            <svg class="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-medium text-gray-800">Premium Quality</h4>
-                                            <p class="text-sm text-gray-500 mt-1">Made with finest materials</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="flex items-start bg-white p-3 rounded-lg shadow-sm">
-                                        <div class="bg-teal-100 p-1 rounded-full mr-3">
-                                            <svg class="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-medium text-gray-800">Comfort Fit</h4>
-                                            <p class="text-sm text-gray-500 mt-1">Designed for all-day wear</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="mt-6 flex justify-between items-center pt-4 border-t border-gray-200">
-                                    <span class="text-2xl font-bold text-teal-600">{{ number_format($product->price, 2) }}€</span>
-                                    <div class="flex space-x-3">
-                                        <button onclick="flipCard(this)" 
-                                                class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl hover:bg-gray-300 transition-all flex items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                            </svg>
-                                            Back
-                                        </button>
-                                        
-                                        @auth
-                                        <button onclick="addToCart({{ $product->id }}, '{{ $product->name }}', {{ $product->price }}, '{{ asset('storage/' . $product->image) }}')" 
-                                                class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-5 py-2 rounded-xl hover:from-teal-600 hover:to-teal-700 transition-all shadow-md hover:shadow-teal-200 flex items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                                <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-                                            </svg>
-                                            Add to Cart
-                                        </button>
-                                        @else
-                                        <a href="{{ route('login') }}" 
-                                            class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-5 py-2 rounded-xl hover:from-teal-600 hover:to-teal-700 transition-all shadow-md hover:shadow-teal-200 flex items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                                <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-                                            </svg>
-                                            Add to Cart
-                                        </a>
-                                        @endauth
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 @endforeach
             </div>
 
-            <!-- Show More button -->
-            @if($remainingProducts->count() > 0)
-            <div class="mt-12 text-center">
-                <button onclick="showMoreProducts()" 
-                        class="bg-white border-2 border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 shadow-md hover:shadow-lg">
-                    Afficher plus de produits ({{ $remainingProducts->count() }})
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 -mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
+            <!-- More Products Section -->
+            @if($hasMore)
+            <div class="mt-12">
+                <button id="load-more" 
+                        class="mx-auto block bg-white text-teal-600 px-8 py-3 rounded-full border border-teal-600 hover:bg-teal-50 transition-colors"
+                        data-page="{{ $currentPage + 1 }}"
+                        onclick="loadMoreProducts(this)">
+                    Load More Products
                 </button>
             </div>
             @endif
@@ -949,6 +615,32 @@
                     notification.remove();
                 }, 300);
             }, 3000);
+        }
+
+        function loadMoreProducts(button) {
+            const page = button.dataset.page;
+            const container = document.getElementById('products-container');
+            const currentUrl = new URL(window.location.href);
+            
+            currentUrl.searchParams.set('page', page);
+
+            fetch(currentUrl.toString(), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Append new products
+                container.insertAdjacentHTML('beforeend', data.html);
+                
+                // Update button
+                if (data.hasMore) {
+                    button.dataset.page = parseInt(page) + 1;
+                } else {
+                    button.style.display = 'none';
+                }
+            });
         }
     </script>
 </x-app-layout>

@@ -673,7 +673,7 @@ nav.scrolled .nav-scrolled\:text-black {
         @endauth
     </div>
 </div>
-                        <x-responsive-nav-link href="#">
+                        <x-responsive-nav-link href="#" style="display: ;">
                             {{ __('Contacts') }}
                         </x-responsive-nav-link>
                         <x-responsive-nav-link href="{{ route('profile.edit') }}" 

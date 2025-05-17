@@ -14,7 +14,28 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('category');
+            $table->string('gender')->default('femme');
+            $table->enum('category', [
+                'nouveau',
+                'se_maquiller',
+                'skin_care',
+                'soin_du_corps',
+                'soin_des_cheveux',
+                'fragrance',
+                'vente',
+                'brands'
+            ]);
+            $table->enum('subcategory', [
+                'face',
+                'lips',
+                'eyes',
+                'makeup_tool',
+                'all_fragrance',
+                'perfumes',
+                'mists',
+                'sets'
+            ])->nullable();
+            $table->string('brand')->nullable();
             $table->string('quantity');
             $table->string('description');
             $table->decimal('price',8,2);
