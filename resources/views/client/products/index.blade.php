@@ -1,3 +1,7 @@
+@php
+    use App\Models\Product;
+@endphp
+
 <x-app-layout>
     <x-slot name="header">
         <div class="container mx-auto px-4">
@@ -30,13 +34,48 @@
             <div class="mb-12">
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     @foreach($categories as $categoryKey => $categoryName)
-                        <a href="{{ auth()->check() ? route('product.private', ['gender' => $currentGender, 'category' => $categoryKey]) : route('product.public', ['gender' => $currentGender, 'category' => $categoryKey]) }}" 
-                            class="modern-card group {{ $category === $categoryKey ? 'active' : '' }}">
-                            <div class="card-content">
-                                <h3 class="card-title">{{ $categoryName }}</h3>
-                                <div class="card-line"></div>
-                            </div>
-                        </a>
+                        <div class="relative">
+                            @php
+                                $hasSubcategories = in_array($categoryKey, [Product::CATEGORY_MAQUILLAGE, Product::CATEGORY_FRAGRANCE]);
+                                $routeName = auth()->check() ? 'product.private.category' : 'product.public.category';
+                                $subRouteName = auth()->check() ? 'product.private.subcategory' : 'product.public.subcategory';
+                            @endphp
+                            
+                            <a href="{{ route($routeName, ['gender' => $currentGender, 'category' => $categoryKey]) }}" 
+                                @if($hasSubcategories)
+                                    data-category="{{ $categoryKey }}"
+                                    class="modern-card group has-subcategories {{ $category === $categoryKey ? 'active' : '' }}"
+                                @else
+                                    class="modern-card group {{ $category === $categoryKey ? 'active' : '' }}"
+                                @endif
+                            >
+                                <div class="card-content">
+                                    <h3 class="card-title">{{ $categoryName }}</h3>
+                                    <div class="card-line"></div>
+                                    @if($hasSubcategories)
+                                        <div class="mt-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto text-gray-400 group-hover:text-teal-500 transition-colors" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                    @endif
+                                </div>
+                            </a>
+                            
+                            <!-- Subcategories Panel (only for categories with subcategories) -->
+                            @if($hasSubcategories && isset($subcategories[$categoryKey]) && count($subcategories[$categoryKey]) > 0)
+                                <div id="subcategories-{{ $categoryKey }}" class="subcategories-panel hidden absolute left-0 right-0 mt-2 bg-white rounded-xl shadow-lg z-50 transform transition-all duration-300 opacity-0">
+                                    <div class="p-4 space-y-2">
+                                        @foreach($subcategories[$categoryKey] as $subKey => $subName)
+                                            <a href="{{ route($subRouteName, ['gender' => $currentGender, 'category' => $categoryKey, 'subcategory' => $subKey]) }}" 
+                                               class="block px-4 py-2 text-gray-700 hover:bg-teal-50 hover:text-teal-600 rounded-lg transition-colors duration-200 {{ $subcategory === $subKey ? 'bg-teal-50 text-teal-600' : '' }}">
+                                                {{ $subName }}
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
                     @endforeach
                 </div>
             </div>
@@ -254,6 +293,19 @@
         .modern-card.active .card-line {
             @apply from-white to-white/80;
         }
+
+        .subcategories-panel.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .subcategories-panel {
+            transform: translateY(-10px);
+        }
+
+        .modern-card.has-subcategories {
+            cursor: pointer;
+        }
     </style>
 
     <script>
@@ -300,6 +352,62 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializeCart();
             updateCartCount();
+            const categories = document.querySelectorAll('.modern-card.has-subcategories');
+            let activePanel = null;
+
+            categories.forEach(category => {
+                category.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const categoryKey = this.dataset.category;
+                    const panel = document.getElementById(`subcategories-${categoryKey}`);
+                    
+                    if (!panel) return; // Skip if no panel exists
+                    
+                    // If clicking the same category
+                    if (activePanel === panel) {
+                        // Toggle the panel
+                        if (panel.classList.contains('show')) {
+                            hidePanel(panel);
+                            activePanel = null;
+                        } else {
+                            showPanel(panel);
+                        }
+                    } else {
+                        // Hide previous panel if exists
+                        if (activePanel) {
+                            hidePanel(activePanel);
+                        }
+                        
+                        // Show new panel
+                        showPanel(panel);
+                        activePanel = panel;
+                    }
+                });
+            });
+
+            // Close panel when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.modern-card.has-subcategories') && !e.target.closest('.subcategories-panel')) {
+                    if (activePanel) {
+                        hidePanel(activePanel);
+                        activePanel = null;
+                    }
+                }
+            });
+
+            function showPanel(panel) {
+                panel.classList.remove('hidden');
+                setTimeout(() => {
+                    panel.classList.add('show');
+                }, 10);
+            }
+
+            function hidePanel(panel) {
+                panel.classList.remove('show');
+                setTimeout(() => {
+                    panel.classList.add('hidden');
+                }, 300);
+            }
         });
 
         function loadMoreProducts(button) {

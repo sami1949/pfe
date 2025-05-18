@@ -41,16 +41,28 @@ Route::middleware('auth')->group(function () {
 
 // Public product routes (no auth required)
 Route::get('/product', [ProductControllerClient::class, "index"])->name('product.public');
-Route::get('/product/{gender?}/{category?}', [ProductControllerClient::class, "index"])
-    ->where(['gender' => 'homme|femme', 'category' => '.*'])
-    ->name('product.public');
+Route::get('/product/{gender?}', [ProductControllerClient::class, "index"])
+    ->where(['gender' => 'homme|femme'])
+    ->name('product.public.gender');
+Route::get('/product/{gender}/{category}', [ProductControllerClient::class, "index"])
+    ->where(['gender' => 'homme|femme'])
+    ->name('product.public.category');
+Route::get('/product/{gender}/{category}/{subcategory}', [ProductControllerClient::class, "index"])
+    ->where(['gender' => 'homme|femme'])
+    ->name('product.public.subcategory');
 
 // Authenticated product routes
 Route::middleware('auth')->group(function () {
     Route::get('/client/products', [ProductControllerClient::class, "index"])->name('product.private');
-    Route::get('/client/products/{gender?}/{category?}', [ProductControllerClient::class, "index"])
-        ->where(['gender' => 'homme|femme', 'category' => '.*'])
-        ->name('product.private');
+    Route::get('/client/products/{gender?}', [ProductControllerClient::class, "index"])
+        ->where(['gender' => 'homme|femme'])
+        ->name('product.private.gender');
+    Route::get('/client/products/{gender}/{category}', [ProductControllerClient::class, "index"])
+        ->where(['gender' => 'homme|femme'])
+        ->name('product.private.category');
+    Route::get('/client/products/{gender}/{category}/{subcategory}', [ProductControllerClient::class, "index"])
+        ->where(['gender' => 'homme|femme'])
+        ->name('product.private.subcategory');
     
     // Cart routes
     Route::get('client/cart', function() {

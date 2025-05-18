@@ -72,25 +72,25 @@ class Product extends Model
     public static function getSubcategoriesByCategory($category)
     {
         $subcategories = [
-            self::CATEGORY_MAQUILLAGE => [
-                self::SUBCATEGORY_FACE => 'Face',
-                self::SUBCATEGORY_LIPS => 'Lips',
-                self::SUBCATEGORY_EYES => 'Eyes',
-                self::SUBCATEGORY_MAKEUP_TOOL => 'Makeup Tools'
-            ],
-            self::CATEGORY_FRAGRANCE => [
-                self::SUBCATEGORY_ALL_FRAGRANCE => 'All Fragrance',
-                self::SUBCATEGORY_PERFUMES => 'Perfumes',
-                self::SUBCATEGORY_MISTS => 'Mists',
-                self::SUBCATEGORY_SETS => 'Sets'
-            ],
-            self::CATEGORY_BRANDS => [
-                self::BRAND_ELF => 'e.l.f Cosmetics',
-                self::BRAND_NYX => 'NYX Professional Makeup'
-            ]
-        ];
+        self::CATEGORY_MAQUILLAGE => [
+            self::SUBCATEGORY_FACE => 'Face',
+            self::SUBCATEGORY_LIPS => 'Lips',
+            self::SUBCATEGORY_EYES => 'Eyes',
+            self::SUBCATEGORY_MAKEUP_TOOL => 'Makeup Tools'
+        ],
+        self::CATEGORY_FRAGRANCE => [
+            self::SUBCATEGORY_ALL_FRAGRANCE => 'All Fragrance',
+            self::SUBCATEGORY_PERFUMES => 'Perfumes',
+            self::SUBCATEGORY_MISTS => 'Mists',
+            self::SUBCATEGORY_SETS => 'Sets'
+        ],
+        self::CATEGORY_BRANDS => [
+            self::BRAND_ELF => 'e.l.f Cosmetics',
+            self::BRAND_NYX => 'NYX Professional Makeup'
+        ]
+    ];
 
-        return $subcategories[$category] ?? [];
+    return $subcategories[$category] ?? [];
     }
 
     public function favoritedBy()

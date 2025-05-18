@@ -12,10 +12,20 @@ class ProductControllerClient extends Controller
         // Get parameters from route or query string
         $gender = $request->route('gender') ?? $request->query('gender', Product::GENDER_FEMME);
         $category = $request->route('category') ?? $request->query('category');
+        $subcategory = $request->route('subcategory') ?? $request->query('subcategory');
         $page = $request->query('page', 1);
         $perPage = 6;
 
-        // Get products based on gender and category filter
+        // Debug log the incoming parameters
+        \Log::info('Product Filter Parameters:', [
+            'gender' => $gender,
+            'category' => $category,
+            'subcategory' => $subcategory,
+            'route_params' => $request->route()->parameters(),
+            'query_params' => $request->query()
+        ]);
+
+        // Get products based on gender, category and subcategory filter
         $query = Product::query();
         
         if ($gender) {
@@ -24,6 +34,24 @@ class ProductControllerClient extends Controller
         
         if ($category) {
             $query->where('category', $category);
+            
+            // Debug log the category filter
+            \Log::info('Category Filter:', [
+                'category' => $category,
+                'sql' => $query->toSql(),
+                'bindings' => $query->getBindings()
+            ]);
+        }
+
+        if ($subcategory) {
+            $query->where('subcategory', $subcategory);
+            
+            // Debug log the subcategory filter
+            \Log::info('Subcategory Filter:', [
+                'subcategory' => $subcategory,
+                'sql' => $query->toSql(),
+                'bindings' => $query->getBindings()
+            ]);
         }
 
         // Get total count for pagination
@@ -34,21 +62,47 @@ class ProductControllerClient extends Controller
                          ->take($perPage)
                          ->get();
 
+        // Debug log the results
+        \Log::info('Query Results:', [
+            'total_products' => $total,
+            'products_returned' => $products->count(),
+            'products' => $products->pluck('name', 'id')
+        ]);
+
         // Get available categories based on gender
         $categories = Product::getCategoriesByGender($gender);
+        
+        // Get subcategories for each category
+        $subcategories = [];
+        foreach (array_keys($categories) as $cat) {
+            $subcategories[$cat] = Product::getSubcategoriesByCategory($cat);
+        }
 
         if ($request->ajax()) {
+            $view = view('client.products.partials.product-cards', [
+                'products' => $products,
+                'category' => $category,
+                'subcategory' => $subcategory
+            ])->render();
+            
             return response()->json([
-                'html' => view('client.products.partials.product-cards', ['products' => $products])->render(),
-                'hasMore' => ($page * $perPage) < $total
+                'html' => $view,
+                'hasMore' => ($page * $perPage) < $total,
+                'debug' => [
+                    'count' => $products->count(),
+                    'category' => $category,
+                    'subcategory' => $subcategory
+                ]
             ]);
         }
 
         return view('client.products.index', [
             'products' => $products,
             'category' => $category,
+            'subcategory' => $subcategory,
             'currentGender' => $gender,
             'categories' => $categories,
+            'subcategories' => $subcategories,
             'hasMore' => ($page * $perPage) < $total,
             'currentPage' => $page
         ]);
