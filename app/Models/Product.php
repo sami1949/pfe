@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
     use HasFactory;
+    
     protected $table = 'products';
     
     // Define constants for genders
@@ -47,14 +49,27 @@ class Product extends Model
         'brand',
         'quantity',
         'description',
+        'description1',
+        'description2',
+        'description3',
         'price',
-        'image'
+        'image',
+        'imageToSwitch'
     ];
 
-    // Get categories by gender
-    public static function getCategoriesByGender($gender)
+    // Get all available genders
+    public static function getGenders()
     {
-        $allCategories = [
+        return [
+            self::GENDER_FEMME => 'Femme',
+            self::GENDER_HOMME => 'Homme'
+        ];
+    }
+
+    // Get all categories
+    public static function getCategories()
+    {
+        return [
             self::CATEGORY_NOUVEAU => 'Nouveau',
             self::CATEGORY_MAQUILLAGE => 'Se maquiller',
             self::CATEGORY_SKINCARE => 'Skin Care',
@@ -64,38 +79,85 @@ class Product extends Model
             self::CATEGORY_VENTE => 'VENTE',
             self::CATEGORY_BRANDS => 'Brands'
         ];
+    }
 
-        return $allCategories;
+    // Get categories by gender
+    public static function getCategoriesByGender($gender)
+    {
+        return self::getCategories(); // Same categories for both genders in this case
+    }
+
+    // Get all subcategories
+    public static function getSubcategories()
+    {
+        return [
+            self::SUBCATEGORY_FACE => 'Face',
+            self::SUBCATEGORY_LIPS => 'Lips',
+            self::SUBCATEGORY_EYES => 'Eyes',
+            self::SUBCATEGORY_MAKEUP_TOOL => 'Makeup Tools',
+            self::SUBCATEGORY_ALL_FRAGRANCE => 'All Fragrance',
+            self::SUBCATEGORY_PERFUMES => 'Perfumes',
+            self::SUBCATEGORY_MISTS => 'Mists',
+            self::SUBCATEGORY_SETS => 'Sets'
+        ];
     }
 
     // Get subcategories by category
     public static function getSubcategoriesByCategory($category)
     {
         $subcategories = [
-        self::CATEGORY_MAQUILLAGE => [
-            self::SUBCATEGORY_FACE => 'Face',
-            self::SUBCATEGORY_LIPS => 'Lips',
-            self::SUBCATEGORY_EYES => 'Eyes',
-            self::SUBCATEGORY_MAKEUP_TOOL => 'Makeup Tools'
-        ],
-        self::CATEGORY_FRAGRANCE => [
-            self::SUBCATEGORY_ALL_FRAGRANCE => 'All Fragrance',
-            self::SUBCATEGORY_PERFUMES => 'Perfumes',
-            self::SUBCATEGORY_MISTS => 'Mists',
-            self::SUBCATEGORY_SETS => 'Sets'
-        ],
-        self::CATEGORY_BRANDS => [
-            self::BRAND_ELF => 'e.l.f Cosmetics',
-            self::BRAND_NYX => 'NYX Professional Makeup'
-        ]
-    ];
+            self::CATEGORY_MAQUILLAGE => [
+                self::SUBCATEGORY_FACE => 'Face',
+                self::SUBCATEGORY_LIPS => 'Lips',
+                self::SUBCATEGORY_EYES => 'Eyes',
+                self::SUBCATEGORY_MAKEUP_TOOL => 'Makeup Tools'
+            ],
+            self::CATEGORY_FRAGRANCE => [
+                self::SUBCATEGORY_ALL_FRAGRANCE => 'All Fragrance',
+                self::SUBCATEGORY_PERFUMES => 'Perfumes',
+                self::SUBCATEGORY_MISTS => 'Mists',
+                self::SUBCATEGORY_SETS => 'Sets'
+            ],
+            self::CATEGORY_BRANDS => [
+                self::BRAND_ELF => 'e.l.f Cosmetics',
+                self::BRAND_NYX => 'NYX Professional Makeup'
+            ]
+        ];
 
-    return $subcategories[$category] ?? [];
+        return $subcategories[$category] ?? [];
     }
 
+    // Get all brands
+    public static function getBrands()
+    {
+        return [
+            self::BRAND_ELF => 'e.l.f Cosmetics',
+            self::BRAND_NYX => 'NYX Professional Makeup'
+        ];
+    }
+
+    // Relationship with users who favorited this product
     public function favoritedBy()
     {
         return $this->belongsToMany(User::class, 'favorites')
             ->withTimestamps();
+    }
+
+    // Scope for gender filtering
+    public function scopeForGender($query, $gender)
+    {
+        return $query->where('gender', $gender);
+    }
+
+    // Scope for category filtering
+    public function scopeForCategory($query, $category)
+    {
+        return $query->where('category', $category);
+    }
+
+    // Scope for subcategory filtering
+    public function scopeForSubcategory($query, $subcategory)
+    {
+        return $query->where('subcategory', $subcategory);
     }
 }

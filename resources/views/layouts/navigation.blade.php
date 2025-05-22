@@ -743,6 +743,78 @@ nav.scrolled .nav-scrolled\:text-black {
         behavior: 'smooth' 
         });
     }
+    function initializeCart() {
+            let userId = "{{ auth()->id() ?? 'guest' }}";
+            let cartKey = `cart_${userId}`;
+            
+            if (!localStorage.getItem(cartKey)) {
+                localStorage.setItem(cartKey, JSON.stringify({}));
+            }
+        }
+
+        function addToCart(productId, productName, productPrice, productImage = null) {
+            @if(!auth()->check())
+                window.location.href = "{{ route('login') }}";
+                return;
+            @endif
+
+            let userId = "{{ auth()->id() ?? 'guest' }}";
+            let cartKey = `cart_${userId}`;
+            let cart = JSON.parse(localStorage.getItem(cartKey)) || {};
+            
+            if (cart[productId]) {
+                cart[productId].quantity += 1;
+            } else {
+                cart[productId] = {
+                    id: productId,
+                    name: productName,
+                    price: productPrice,
+                    image: productImage,
+                    quantity: 1
+                };
+            }
+            
+            localStorage.setItem(cartKey, JSON.stringify(cart));
+            updateCartCount();
+            showNotification(`${productName} added to cart!`);
+        }
+
+        function updateCartCount() {
+            let userId = "{{ auth()->id() ?? 'guest' }}";
+            let cartKey = `cart_${userId}`;
+            let cart = JSON.parse(localStorage.getItem(cartKey)) || {};
+            let totalItems = 0;
+            
+            for (let productId in cart) {
+                totalItems += cart[productId].quantity;
+            }
+            
+            const cartCountElement = document.getElementById('cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = totalItems;
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 bg-teal-600 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-10 opacity-0 transition-all duration-300';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-y-10', 'opacity-0');
+                notification.classList.add('translate-y-0', 'opacity-100');
+            }, 10);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-y-0', 'opacity-100');
+                notification.classList.add('translate-y-10', 'opacity-0');
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
     </script>
 </body>
 </html> 

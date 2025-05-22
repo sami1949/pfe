@@ -37,7 +37,7 @@ return new class extends Migration
             ])->nullable();
             $table->string('brand')->nullable();
             $table->string('quantity');
-            $table->string('descriptionTitre');
+            $table->string('description');
             $table->string('description1');
             $table->string('description2');
             $table->string('description3');
