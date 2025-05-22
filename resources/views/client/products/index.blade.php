@@ -31,47 +31,103 @@
             </div>
 
             <!-- Category Navigation -->
-            <div class="mb-12">
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div class="mb-16">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                     @foreach($categories as $categoryKey => $categoryName)
-                        <div class="relative">
-                            @php
-                                $hasSubcategories = in_array($categoryKey, [Product::CATEGORY_MAQUILLAGE, Product::CATEGORY_FRAGRANCE]);
-                                $routeName = auth()->check() ? 'product.private.category' : 'product.public.category';
-                                $subRouteName = auth()->check() ? 'product.private.subcategory' : 'product.public.subcategory';
-                            @endphp
+                        @php
+                            $hasSubcategories = in_array($categoryKey, [Product::CATEGORY_MAQUILLAGE, Product::CATEGORY_FRAGRANCE]);
+                            $routeName = auth()->check() ? 'product.private.category' : 'product.public.category';
+                            $subRouteName = auth()->check() ? 'product.private.subcategory' : 'product.public.subcategory';
+                            $isActive = $category === $categoryKey;
                             
-                            <a href="{{ route($routeName, ['gender' => $currentGender, 'category' => $categoryKey]) }}" 
-    @if($hasSubcategories)
-        data-category="{{ $categoryKey }}"
-        class="modern-card group has-subcategories {{ $category === $categoryKey ? 'active' : '' }}"
-    @else
-        class="modern-card group {{ $category === $categoryKey ? 'active' : '' }}"
-    @endif
->
-    <div class="card-content">
-        <div class="flex items-center justify-center gap-2">
-            <h3 class="card-title">{{ $categoryName }}</h3>
-            @if($hasSubcategories)
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 group-hover:text-[#c0a8a8] transition-colors" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-            @endif
-        </div>
-        <div class="card-line"></div>
-    </div>
-</a>
-                            
+                            // Single color scheme for all categories
+                            $baseColor = 'bg-gradient-to-br from-[#F9E8E8] to-[#F5D7D7]';
+                            $activeColor = 'bg-gradient-to-br from-[#F5D7D7] to-[#F2C9C9] ring-2 ring-[#E8B6B6]';
+                            $colorClass = $isActive ? $activeColor : $baseColor;
+                        @endphp
+                        
+                        <div class="relative group" x-data="{ open: false }" 
+                            @mouseenter="if({{ $hasSubcategories ? 'true' : 'false' }}) open = true" 
+                            @mouseleave="open = false"
+                            @click.away="open = false">
+                            <!-- Main Category Card -->
+                            <div class="block h-full">
+                                <a href="{{ route($routeName, ['gender' => $currentGender, 'category' => $categoryKey]) }}"
+                                   class="block h-full">
+                                    <div class="h-full transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+                                        <div class="h-full rounded-xl overflow-hidden border border-[#F0F0F0] shadow-[0_2px_6px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all duration-300 {{ $colorClass }}">
+                                            <div class="h-32 flex items-center justify-center p-4 relative overflow-hidden">
+                                                <!-- Decorative elements -->
+                                                <div class="absolute -bottom-4 -right-4 w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm"></div>
+                                                <div class="absolute -top-4 -left-4 w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm"></div>
+                                                
+                                                <div class="text-center z-10">
+                                                    <h3 class="text-lg font-medium text-[#5A5A5A] group-hover:text-[#3D3D3D] transition-colors {{ $isActive ? 'font-semibold text-[#3D3D3D]' : '' }}">
+                                                        {{ $categoryName }}
+                                                    </h3>
+                                                    @if($hasSubcategories)
+                                                        <div class="mt-2 flex justify-center gap-2">
+                                                            <button @click.prevent.stop="open = !open" 
+                                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white/80 text-[#886666] backdrop-blur-sm hover:bg-[#f8e8e8] {{ $isActive ? 'bg-white/90 text-[#6D5A5A]' : '' }}">
+                                                                +{{ count($subcategories[$categoryKey] ?? []) }} options
+                                                                <svg xmlns="http://www.w3.org/2000/svg" 
+                                                                    class="ml-1 h-3 w-3 text-[#886666] transform transition-transform duration-200"
+                                                                    :class="{ 'rotate-180': open }"
+                                                                    viewBox="0 0 20 20" 
+                                                                    fill="currentColor">
+                                                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
                             <!-- Subcategories Panel -->
                             @if($hasSubcategories && isset($subcategories[$categoryKey]) && count($subcategories[$categoryKey]) > 0)
-                                <div id="subcategories-{{ $categoryKey }}" class="subcategories-panel hidden absolute left-0 right-0 mt-2 bg-white rounded-xl shadow-lg z-50 transform transition-all duration-300 opacity-0 border border-[#f8e8e8]">
-                                    <div class="p-4 space-y-2">
-                                        @foreach($subcategories[$categoryKey] as $subKey => $subName)
-                                            <a href="{{ route($subRouteName, ['gender' => $currentGender, 'category' => $categoryKey, 'subcategory' => $subKey]) }}" 
-                                                class="block px-4 py-2 text-gray-700 hover:bg-[#f8e8e8] hover:text-gray-800 rounded-lg transition-colors duration-200 {{ $subcategory === $subKey ? 'bg-[#f8e8e8] text-gray-800' : '' }}">
-                                                {{ $subName }}
-                                            </a>
-                                        @endforeach
+                                <div x-show="open" 
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 translate-y-1"
+                                     x-transition:enter-end="opacity-100 translate-y-0"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="opacity-100 translate-y-0"
+                                     x-transition:leave-end="opacity-0 translate-y-1"
+                                     class="absolute z-50 w-full mt-2">
+                                    <div class="bg-white rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-[#EAEAEA] overflow-hidden backdrop-blur-sm">
+                                        <div class="p-4">
+                                            <h4 class="text-xs font-medium uppercase tracking-wider text-[#AAAAAA] mb-2 flex items-center">
+                                                <span>Browse {{ $categoryName }}</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </h4>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                @foreach($subcategories[$categoryKey] as $subKey => $subName)
+                                                    @php
+                                                        $isSubActive = $subcategory === $subKey;
+                                                    @endphp
+                                                    <a href="{{ route($subRouteName, ['gender' => $currentGender, 'category' => $categoryKey, 'subcategory' => $subKey]) }}" 
+                                                       class="px-3 py-2 text-sm rounded-lg transition-all duration-200 flex items-center
+                                                              {{ $isSubActive ? 
+                                                                 'bg-[#F9E8E8] text-[#8A5A5A] font-medium border border-[#E8B6B6]/50 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]' : 
+                                                                 'text-[#7A7A7A] hover:bg-[#FAF5F5] hover:text-[#6D5A5A]' }}">
+                                                        @if($categoryKey === Product::CATEGORY_BRANDS)
+                                                            <span class="inline-block w-6 h-6 rounded-full bg-[#F0E8E8] mr-2 flex-shrink-0 border border-[#E8D6D6]"></span>
+                                                        @endif
+                                                        {{ $subName }}
+                                                        @if($isSubActive)
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 text-[#8A5A5A]" viewBox="0 0 20 20" fill="currentColor">
+                                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                            </svg>
+                                                        @endif
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             @endif
@@ -91,7 +147,12 @@
                             <div class="product-image-container">
                                 <img src="{{ asset('storage/' . $product->image) }}" 
                                     alt="{{ $product->name }}"
-                                    class="product-image">
+                                    class="product-image main-image">
+                                @if($product->imageToSwitch)
+                                <img src="{{ asset('storage/' . $product->imageToSwitch) }}" 
+                                    alt="{{ $product->name }} - Alternative View"
+                                    class="product-image hover-image">
+                                @endif
                                 <div class="image-overlay"></div>
                             </div>
                             @endif
@@ -270,8 +331,9 @@
 
         .flip-card-back {
             transform: rotateY(180deg);
-            background-color: #f8e8e8;
+            background-color: #FFF5F5;
             border-radius: 1rem;
+            padding: 1.25rem;
         }
 
         /* Image Styles */
@@ -287,17 +349,35 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 0.3s ease-in-out;
         }
 
-        .product-card:hover .product-image {
-            transform: scale(1.05);
+        .main-image {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        .hover-image {
+            opacity: 0;
+            z-index: 2;
+        }
+
+        .product-card:hover .product-image-container .main-image {
+            opacity: 0;
+        }
+
+        .product-card:hover .product-image-container .hover-image {
+            opacity: 1;
         }
 
         .image-overlay {
             position: absolute;
             inset: 0;
             background: linear-gradient(to top, rgba(0, 0, 0, 0.1), transparent);
+            pointer-events: none;
         }
 
         /* Text Styles - Consistent across all cards */
@@ -338,43 +418,74 @@
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 0.875rem;
+            margin-top: 1rem;
         }
 
         .detail-item {
-            display: flex;
-            align-items: flex-start;
+            display: flex !important;
+            align-items: center;
             background-color: white;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 0.5rem;
+            opacity: 1 !important;
+        }
+
+        .flip-card-back .detail-item {
+            background-color: #FFF5F5;
+            border: 1px solid rgba(136, 102, 102, 0.1);
+        }
+
+        .detail-text {
+            color: #886666;
+            font-size: 0.9rem;
+            margin: 0;
         }
 
         .detail-icon {
-            background-color: #f8e8e8;
-            padding: 0.25rem;
-            border-radius: 9999px;
+            width: 1.25rem;
+            height: 1.25rem;
             margin-right: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .icon {
-            height: 1.25rem;
-            width: 1.25rem;
-            color: #1f2937;
+            width: 100%;
+            height: 100%;
         }
 
         .detail-text {
             font-size: 0.875rem;
-            color: #4b5563;
+            color: #4A4A4A;
+            line-height: 1.4;
+        }
+
+        .brand-detail {
+            background-color: #FFF5F5;
+            border: 1px solid rgba(136, 102, 102, 0.1);
+            margin-bottom: 0.75rem;
+            display: flex !important;
+            opacity: 1 !important;
+        }
+
+        .brand-text {
+            font-weight: 500;
+            color: #886666;
+        }
+
+        .flip-card-back .detail-item {
+            display: flex !important;
+            opacity: 1 !important;
         }
 
         .product-actions {
             margin-top: 1.5rem;
             padding-top: 1rem;
-            border-top: 1px solid #e5e7eb;
+            border-top: 1px solid rgba(136, 102, 102, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -385,27 +496,33 @@
             gap: 0.75rem;
         }
 
-        /* Button Styles - Consistent across all cards */
+        /* Button Styles */
         .details-button, .back-button, 
         .add-to-cart-button, .login-button {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0.5rem 1.25rem;
+            padding: 0.625rem 1.25rem;
             border-radius: 0.75rem;
             font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            font-size: 0.875rem;
-            background-color: #f8e8e8;
-            color: #886666 !important;
+            font-size: 0.9375rem;
+            transition: all 0.2s ease;
+            background-color: white;
+            color: #886666;
+            border: 1px solid rgba(136, 102, 102, 0.2);
         }
 
-        .details-button:hover, .add-to-cart-button:hover, 
-        .login-button:hover, .back-button:hover {
-            background-color: #f0d8d8;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        .details-button:hover, .back-button:hover,
+        .add-to-cart-button:hover, .login-button:hover {
+            background-color: #F8E8E8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(136, 102, 102, 0.1);
+        }
+
+        .add-to-cart-button, .login-button {
+            background-color: #F8E8E8;
+            color: #886666;
+            border: none;
         }
 
         /* Icon Styles - Made consistent */
@@ -541,6 +658,47 @@
         .loaded-product {
             animation: fadeIn 0.5s ease-out forwards;
         }
+        /* Smooth transitions for all interactive elements */
+    .transition-all {
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Refined shadow effects */
+    .shadow-soft {
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    }
+    
+            /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .subcategories-panel {
+                max-height: 60vh;
+                overflow-y: auto;
+            }
+
+            .detail-item {
+                padding: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        /* Custom scrollbar for subcategory panels */
+        .subcategory-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+        .subcategory-panel::-webkit-scrollbar-thumb {
+            background-color: #F5D7D7;
+            border-radius: 2px;
+        }
+
+        /* Active state indicator for mobile */
+        .category-indicator {
+            transition: transform 0.2s ease;
+        }
+        
+        .category-active .category-indicator {
+            transform: rotate(180deg);
+        }
     </style>
 
     <script>
@@ -548,117 +706,24 @@
             const card = button.closest('.product-card');
             if (!card) return;
             
-            card.classList.toggle('flipped');
-            
-            // Fermer les autres cartes
-            document.querySelectorAll('.product-card').forEach(otherCard => {
-                if (otherCard !== card) {
-                    otherCard.classList.remove('flipped');
+            // Close any other flipped cards first
+            document.querySelectorAll('.product-card.flipped').forEach(flippedCard => {
+                if (flippedCard !== card) {
+                    flippedCard.classList.remove('flipped');
                 }
             });
+            
+            // Ensure content is visible before flipping
+            const detailItems = card.querySelectorAll('.detail-item');
+            detailItems.forEach(item => {
+                item.style.display = 'flex';
+            });
+            
+            // Then flip the clicked card
+            setTimeout(() => {
+                card.classList.toggle('flipped');
+            }, 50);
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeCart();
-            updateCartCount();
-            
-            // Gestion des sous-catégories
-            const categories = document.querySelectorAll('.modern-card.has-subcategories');
-            let activePanel = null;
-
-            categories.forEach(category => {
-                category.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const categoryKey = this.dataset.category;
-                    const panel = document.getElementById(`subcategories-${categoryKey}`);
-                    
-                    if (!panel) return;
-                    
-                    if (activePanel === panel) {
-                        // Si le même panneau est déjà actif, on le ferme
-                        if (panel.classList.contains('show')) {
-                            hidePanel(panel);
-                            activePanel = null;
-                        } else {
-                            showPanel(panel);
-                        }
-                    } else {
-                        // Si un autre panneau est actif, on le ferme d'abord
-                        if (activePanel) {
-                            hidePanel(activePanel);
-                        }
-                        showPanel(panel);
-                        activePanel = panel;
-                    }
-                });
-            });
-
-            // Fermer le panneau actif si on clique en dehors
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.modern-card.has-subcategories') && !e.target.closest('.subcategories-panel')) {
-                    if (activePanel) {
-                        hidePanel(activePanel);
-                        activePanel = null;
-                    }
-                }
-            });
-
-            function showPanel(panel) {
-                panel.classList.remove('hidden');
-                setTimeout(() => {
-                    panel.classList.add('show');
-                }, 10);
-            }
-
-            function hidePanel(panel) {
-                panel.classList.remove('show');
-                setTimeout(() => {
-                    panel.classList.add('hidden');
-                }, 300);
-            }
-
-            // Observer pour les nouvelles cartes
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.addedNodes.length) {
-                        mutation.addedNodes.forEach((node) => {
-                            if (node.nodeType === 1 && node.classList.contains('product-card')) {
-                                if (!node.classList.contains('hover-effect')) {
-                                    node.classList.add('hover-effect');
-                                }
-                            }
-                        });
-                    }
-                });
-            });
-
-            observer.observe(document.getElementById('products-container'), {
-                childList: true,
-                subtree: true
-            });
-        });
-
-        // Styles pour les sous-catégories
-        const subcategoriesStyle = document.createElement('style');
-        subcategoriesStyle.textContent = `
-            .subcategories-panel {
-                transform: translateY(-10px);
-                opacity: 0;
-                visibility: hidden;
-                transition: all 0.3s ease;
-            }
-
-            .subcategories-panel.show {
-                transform: translateY(0);
-                opacity: 1;
-                visibility: visible;
-            }
-
-            .subcategories-panel.hidden {
-                display: none;
-            }
-        `;
-        document.head.appendChild(subcategoriesStyle);
 
         function loadMoreProducts(button) {
             const page = button.dataset.page;
@@ -674,59 +739,163 @@
             })
             .then(response => response.json())
             .then(data => {
-                // Ajouter directement le HTML au conteneur
+                // Add new content directly to container
                 container.insertAdjacentHTML('beforeend', data.html);
 
-                // Mettre à jour le bouton
+                // Update the button
                 if (data.hasMore) {
                     button.dataset.page = parseInt(page) + 1;
                 } else {
                     button.style.display = 'none';
                 }
+
+                // Initialize any necessary functionality for new cards
+                initializeNewCards();
             });
         }
+
+        function initializeCardButtons(card) {
+            // Initialize flip buttons
+            const flipButtons = card.querySelectorAll('button[onclick*="flipCard"]');
+            flipButtons.forEach(button => {
+                button.onclick = function(e) {
+                    e.preventDefault();
+                    flipCard(this);
+                };
+            });
+
+            // Initialize add to cart button
+            const addToCartButton = card.querySelector('button[onclick*="addToCart"]');
+            if (addToCartButton) {
+                const originalOnClick = addToCartButton.getAttribute('onclick');
+                const matches = originalOnClick.match(/addToCart\('([^']*)', '([^']*)', ([^,]*), '([^']*)'\)/);
+                if (matches) {
+                    const [_, id, name, price, image] = matches;
+                    addToCartButton.onclick = function(e) {
+                        e.preventDefault();
+                        addToCart(id, name, parseFloat(price), image);
+                    };
+                }
+            }
+        }
+
+        function initializeNewCards() {
+            const newCards = document.querySelectorAll('.product-card:not(.initialized)');
+            newCards.forEach(card => {
+                // Initialize buttons
+                initializeCardButtons(card);
+                
+                // Remove hover effect handling from JavaScript
+                // We'll handle it purely with CSS
+
+                card.classList.add('initialized');
+            });
+        }
+
+        // Initialize cart as soon as possible
+        initializeCart();
+
+        // Initialize other components when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartCount();
+            initializeNewCards();
+            
+            // Remove the click event listeners for categories since we're handling it with direct links now
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.addedNodes.length) {
+                        mutation.addedNodes.forEach((node) => {
+                            if (node.nodeType === 1 && node.classList.contains('product-card')) {
+                                if (!node.classList.contains('initialized')) {
+                                    initializeNewCards();
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+            observer.observe(document.getElementById('products-container'), {
+                childList: true,
+                subtree: true
+            });
+        });
 
         function initializeCart() {
             let userId = "{{ auth()->id() ?? 'guest' }}";
             let cartKey = `cart_${userId}`;
             
-            // Vérifier si l'utilisateur a changé
-            const lastUserId = localStorage.getItem('last_user_id');
-            if (lastUserId !== userId) {
-                // Nettoyer tous les anciens paniers
-                Object.keys(localStorage).forEach(key => {
-                    if (key.startsWith('cart_')) {
-                        localStorage.removeItem(key);
+            try {
+                // Get existing cart or initialize new one
+                let currentCart = localStorage.getItem(cartKey);
+                
+                if (!currentCart) {
+                    // If no cart exists, check for existing cart in other keys
+                    let existingCart = null;
+                    
+                    // First check if there's a cart for this specific user
+                    if (userId !== 'guest') {
+                        existingCart = localStorage.getItem(`cart_${userId}`);
                     }
-                });
-                // Enregistrer le nouvel ID utilisateur
-                localStorage.setItem('last_user_id', userId);
-            }
-            
-            // Initialiser le panier pour l'utilisateur actuel
-            if (!localStorage.getItem(cartKey)) {
+                    
+                    // If no existing cart found, initialize empty cart
+                    if (!existingCart) {
+                        existingCart = JSON.stringify({});
+                    }
+                    
+                    // Set the cart
+                    localStorage.setItem(cartKey, existingCart);
+                }
+                
+                // Update cart count
+                updateCartCount();
+                
+            } catch (error) {
+                console.error('Error initializing cart:', error);
+                // Fallback to empty cart in case of error
                 localStorage.setItem(cartKey, JSON.stringify({}));
             }
-
-            // Mettre à jour le compteur du panier
-            updateCartCount();
+        }
+        
+        // Function to get current cart data
+        function getCurrentCart() {
+            const userId = "{{ auth()->id() ?? 'guest' }}";
+            const cartKey = `cart_${userId}`;
+            return JSON.parse(localStorage.getItem(cartKey) || '{}');
         }
 
         function updateCartCount() {
-            let userId = "{{ auth()->id() ?? 'guest' }}";
-            let cartKey = `cart_${userId}`;
-            let cart = JSON.parse(localStorage.getItem(cartKey)) || {};
-            let totalItems = 0;
-            
-            for (let productId in cart) {
-                totalItems += cart[productId].quantity;
-            }
-            
-            const cartCountElement = document.getElementById('cart-count');
-            if (cartCountElement) {
-                cartCountElement.textContent = totalItems;
+            try {
+                const cart = getCurrentCart();
+                let totalItems = 0;
+                
+                for (let productId in cart) {
+                    if (cart[productId] && cart[productId].quantity) {
+                        totalItems += cart[productId].quantity;
+                    }
+                }
+                
+                const cartCountElement = document.getElementById('cart-count');
+                if (cartCountElement) {
+                    cartCountElement.textContent = totalItems;
+                }
+
+                // Dispatch event for other pages that might need to update
+                window.dispatchEvent(new CustomEvent('cartUpdated', { 
+                    detail: { count: totalItems }
+                }));
+            } catch (error) {
+                console.error('Error updating cart count:', error);
             }
         }
+
+        // Listen for cart updates from other pages
+        window.addEventListener('cartUpdated', function(event) {
+            const cartCountElement = document.getElementById('cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = event.detail.count;
+            }
+        });
 
         function addToCart(productId, productName, productPrice, productImage = null) {
             @if(!auth()->check())
@@ -783,5 +952,24 @@
                 initializeCart();
             }
         });
-    </script>
+          </script>
+    <style>
+        .brand-detail {
+            background-color: #FFF5F5;
+            border: 1px solid rgba(136, 102, 102, 0.1);
+            margin-bottom: 0.75rem;
+            display: flex !important;
+            opacity: 1 !important;
+        }
+
+        .brand-text {
+            font-weight: 500;
+            color: #886666;
+        }
+
+        .flip-card-back .detail-item {
+            display: flex !important;
+            opacity: 1 !important;
+        }
+    </style>
 </x-app-layout> 

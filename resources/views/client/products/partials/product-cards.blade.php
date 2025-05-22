@@ -7,7 +7,12 @@
             <div class="product-image-container">
                 <img src="{{ asset('storage/' . $product->image) }}" 
                     alt="{{ $product->name }}"
-                    class="product-image">
+                    class="product-image main-image">
+                @if($product->imageToSwitch)
+                <img src="{{ asset('storage/' . $product->imageToSwitch) }}" 
+                    alt="{{ $product->name }} - Alternative View"
+                    class="product-image hover-image">
+                @endif
                 <div class="image-overlay"></div>
             </div>
             @endif

@@ -39,8 +39,8 @@ class ProductSeeder extends Seeder
             'description2' => 'Tenue longue durée jusqu\'à 12 heures',
             'description3' => 'Texture silicone-free',
             'price' => 29.99,
-            'image' => 'products/primer.jpg',
-            'imageToSwitch' => 'products/primer-alt.jpg'
+            'image' => 'products/primer1.jpg',
+            'imageToSwitch' => 'products/primer.jpg'
         ]);
 
         // Se Maquiller - Lips
@@ -56,16 +56,17 @@ class ProductSeeder extends Seeder
             'description2' => 'Ne dessèche pas les lèvres',
             'description3' => 'Disponible en 12 teintes tendance',
             'price' => 19.99,
-            'image' => 'products/lipstick.jpg',
-            'imageToSwitch' => 'products/lipstick-alt.jpg'
+            'image' => 'products/lipstick1.jpg',
+            'imageToSwitch' => 'products/lipstick.jpg'
         ]);
 
+        // Updated: Changed from null to BRAND_ELF (or BRAND_NYX if preferred)
         Product::create([
             'name' => 'produit Homme',
             'gender' => 'homme',
             'category' => Product::CATEGORY_FRAGRANCE,
             'subcategory' => Product::SUBCATEGORY_PERFUMES,
-            'brand' => null,
+            'brand' => Product::BRAND_ELF, // Assigned ELF (change to NYX if needed)
             'quantity' => '100',
             'description' => 'RI7A NADIA',
             'description1' => 'Parfum oriental boisé',
@@ -110,13 +111,13 @@ class ProductSeeder extends Seeder
             'imageToSwitch' => 'products/brushes-alt.jpg'
         ]);
 
-        // Skin Care
+        // Skin Care (Updated: Changed from null to BRAND_ELF)
         Product::create([
             'name' => 'Crème Hydratante Luxe',
             'gender' => 'femme',
             'category' => Product::CATEGORY_SKINCARE,
             'subcategory' => null,
-            'brand' => null,
+            'brand' => Product::BRAND_ELF,
             'quantity' => '150',
             'description' => 'Crème hydratante intense pour une peau éclatante',
             'description1' => 'Enrichie en acide hyaluronique',
@@ -127,13 +128,13 @@ class ProductSeeder extends Seeder
             'imageToSwitch' => 'products/creme-hydratante-alt.jpg'
         ]);
 
-        // Soin du Corps
+        // Soin du Corps (Updated: Changed from null to BRAND_ELF)
         Product::create([
             'name' => 'Crème Corps Nourrissante',
             'gender' => 'femme',
             'category' => Product::CATEGORY_CORPS,
             'subcategory' => null,
-            'brand' => null,
+            'brand' => Product::BRAND_ELF,
             'quantity' => '200',
             'description' => 'Crème corps ultra-nourrissante',
             'description1' => 'A base de beurre de karité',
@@ -144,13 +145,13 @@ class ProductSeeder extends Seeder
             'imageToSwitch' => 'products/body-cream-alt.jpg'
         ]);
 
-        // Soin des Cheveux
+        // Soin des Cheveux (Updated: Changed from null to BRAND_ELF)
         Product::create([
             'name' => 'Masque Capillaire Réparateur',
             'gender' => 'femme',
             'category' => Product::CATEGORY_CHEVEUX,
             'subcategory' => null,
-            'brand' => null,
+            'brand' => Product::BRAND_ELF,
             'quantity' => '250',
             'description' => 'Masque réparateur intense pour cheveux',
             'description1' => 'Enrichi en protéines de soie',
@@ -161,13 +162,13 @@ class ProductSeeder extends Seeder
             'imageToSwitch' => 'products/hair-mask-alt.jpg'
         ]);
 
-        // Fragrance - All Fragrance
+        // Fragrance - All Fragrance (Updated: Changed from null to BRAND_NYX)
         Product::create([
             'name' => 'Eau de Parfum Florale',
             'gender' => 'femme',
             'category' => Product::CATEGORY_FRAGRANCE,
             'subcategory' => Product::SUBCATEGORY_ALL_FRAGRANCE,
-            'brand' => null,
+            'brand' => Product::BRAND_NYX,
             'quantity' => '75',
             'description' => 'Collection complète de parfums floraux',
             'description1' => 'Notes de tête: Pêche, Bergamote',
@@ -178,13 +179,13 @@ class ProductSeeder extends Seeder
             'imageToSwitch' => 'products/perfume-all-alt.jpg'
         ]);
 
-        // Fragrance - Perfumes
+        // Fragrance - Perfumes (Updated: Changed from null to BRAND_NYX)
         Product::create([
             'name' => 'Parfum Élégance',
             'gender' => 'femme',
             'category' => Product::CATEGORY_FRAGRANCE,
             'subcategory' => Product::SUBCATEGORY_PERFUMES,
-            'brand' => null,
+            'brand' => Product::BRAND_NYX,
             'quantity' => '50',
             'description' => 'Parfum de luxe aux notes délicates',
             'description1' => 'Concentration exceptionnelle',
@@ -195,13 +196,13 @@ class ProductSeeder extends Seeder
             'imageToSwitch' => 'products/perfume-alt.jpg'
         ]);
 
-        // Fragrance - Mists
+        // Fragrance - Mists (Updated: Changed from null to BRAND_NYX)
         Product::create([
             'name' => 'Brume Parfumée',
             'gender' => 'femme',
             'category' => Product::CATEGORY_FRAGRANCE,
             'subcategory' => Product::SUBCATEGORY_MISTS,
-            'brand' => null,
+            'brand' => Product::BRAND_NYX,
             'quantity' => '100',
             'description' => 'Brume légère et rafraîchissante',
             'description1' => 'Parfait pour une utilisation quotidienne',
@@ -212,13 +213,13 @@ class ProductSeeder extends Seeder
             'imageToSwitch' => 'products/mist-alt.jpg'
         ]);
 
-        // Fragrance - Sets
+        // Fragrance - Sets (Updated: Changed from null to BRAND_NYX)
         Product::create([
             'name' => 'Coffret Parfum Deluxe',
             'gender' => 'femme',
             'category' => Product::CATEGORY_FRAGRANCE,
             'subcategory' => Product::SUBCATEGORY_SETS,
-            'brand' => null,
+            'brand' => Product::BRAND_NYX,
             'quantity' => '25',
             'description' => 'Coffret comprenant parfum, lotion et brume parfumée',
             'description1' => 'Idéal pour offrir',

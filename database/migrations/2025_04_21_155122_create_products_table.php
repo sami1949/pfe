@@ -35,7 +35,7 @@ return new class extends Migration
                 'mists',
                 'sets'
             ])->nullable();
-            $table->string('brand')->nullable();
+            $table->string('brand');
             $table->string('quantity');
             $table->string('description');
             $table->string('description1');
