@@ -278,6 +278,7 @@
             @endif
         </div>
     </div>
+    
 
     <style>
         /* Base Product Card Styles - Applied to ALL product cards */
