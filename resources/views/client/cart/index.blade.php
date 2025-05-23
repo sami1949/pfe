@@ -516,6 +516,7 @@
         let cartKey = `cart_${userId}`;
         let cart = JSON.parse(localStorage.getItem(cartKey)) || {};
         
+        
         // Check if product already exists in cart
         if (cart[productId]) {
             cart[productId].quantity += 1;
