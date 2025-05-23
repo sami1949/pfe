@@ -118,48 +118,240 @@
     </div>
 
     <style>
+        /* Cart Page Container */
+        .py-12 {
+            background: linear-gradient(to bottom right, #f8f9fa, #f5f5f5);
+        }
+
+        /* Cart Header */
+        .font-bold.text-2xl {
+            color: #2c3e50;
+            letter-spacing: -0.02em;
+        }
+
+        /* Empty Cart State */
+        #empty-cart {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Cart Items Container */
+        .bg-white.rounded-xl {
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        /* Cart Item */
+        .cart-item {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .cart-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Product Image Container */
+        .cart-item .w-32 {
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .cart-item:hover .w-32 {
+            transform: scale(1.02);
+        }
+
+        /* Product Details */
+        .cart-item h4 {
+            font-size: 1.125rem;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .cart-item .text-teal-600 {
+            color: #886666;
+            font-weight: 600;
+        }
+
+        /* Delete Button */
+        .delete-btn {
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-btn:hover {
+            background-color: #fee2e2;
+            color: #dc2626 !important;
+            transform: scale(1.1);
+        }
+
+        /* Quantity Controls */
         .quantity-btn {
-            width: 30px;
-            height: 30px;
+            width: 2rem;
+            height: 2rem;
             display: flex;
             align-items: center;
             justify-content: center;
             border: 1px solid #e5e7eb;
-            background-color: #f9fafb;
-            cursor: pointer;
-            transition: all 0.2s;
+            background-color: white;
+            color: #374151;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
-        
+
         .quantity-btn:hover {
-            background-color: #e5e7eb;
+            background-color: #f3f4f6;
+            border-color: #d1d5db;
         }
-        
+
         .quantity-input {
-            width: 40px;
+            width: 3rem;
+            height: 2rem;
             text-align: center;
-            border-top: 1px solid #e5e7eb;
-            border-bottom: 1px solid #e5e7eb;
+            border: 1px solid #e5e7eb;
             border-left: none;
             border-right: none;
+            font-weight: 500;
+            color: #374151;
             -moz-appearance: textfield;
         }
-        
+
         .quantity-input::-webkit-outer-spin-button,
         .quantity-input::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
-        
-        .delete-btn:hover .trash-icon {
-            transform: scale(1.1);
+
+        /* Order Summary Card */
+        .sticky.top-6 {
+            transition: all 0.3s ease;
         }
-        
-        .trash-icon {
-            transition: transform 0.2s;
+
+        .sticky.top-6 .bg-white {
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f3f4f6;
         }
-        
-        .cart-item:hover {
-            background-color: #f9fafb;
+
+        /* Summary Title */
+        .sticky.top-6 h3 {
+            color: #2c3e50;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Price Details */
+        .text-gray-600 {
+            color: #4b5563;
+        }
+
+        .font-medium {
+            color: #2c3e50;
+        }
+
+        /* Free Shipping Badge */
+        .text-teal-600 {
+            color: #886666;
+            font-weight: 600;
+        }
+
+        /* Total Amount */
+        .text-xl.font-bold.text-teal-600 {
+            color: #886666;
+            font-size: 1.5rem;
+        }
+
+        /* Checkout Button */
+        #checkout-btn {
+            background: linear-gradient(to right, #886666, #765757);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 12px rgba(136, 102, 102, 0.15);
+        }
+
+        #checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(136, 102, 102, 0.2);
+            background: linear-gradient(to right, #765757, #654646);
+        }
+
+        /* Continue Shopping Link */
+        .text-teal-600.hover\:text-teal-700 {
+            color: #886666;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .text-teal-600.hover\:text-teal-700:hover {
+            color: #765757;
+        }
+
+        /* Notification */
+        .fixed.bottom-4.right-4 {
+            background: linear-gradient(to right, #886666, #765757);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .cart-item {
+                padding: 1rem;
+            }
+
+            .cart-item .w-32 {
+                width: 6rem;
+                height: 6rem;
+            }
+
+            .quantity-btn {
+                width: 1.75rem;
+                height: 1.75rem;
+            }
+
+            .quantity-input {
+                width: 2.5rem;
+                height: 1.75rem;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .loading {
+            background: linear-gradient(
+                90deg,
+                #f0f0f0 25%,
+                #f8f8f8 50%,
+                #f0f0f0 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
         }
     </style>
 

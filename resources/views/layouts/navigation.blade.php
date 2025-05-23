@@ -496,7 +496,7 @@ nav.scrolled .nav-scrolled\:text-black {
                         <!-- Cart Icon -->
                         <div id="cart-icon" class="relative">
                         @auth
-                        <a href="{{ route('cart') }}" class="text-[#f8e8e8] hover:text-teal-600 transition-colors duration-300 nav-scrolled:text-black">
+                        <a href="#" onclick="handleCartClick(event)" class="text-[#f8e8e8] hover:text-teal-600 transition-colors duration-300 nav-scrolled:text-black">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M3 1a1 1 0 000 2h1l.8 3h10.4l.8-3h1a1 1 0 100-2H3zm2.6 6l1.4 5.6A2 2 0 009 14h4a2 2 0 001.9-1.4L16.4 7H5.6zM6 17a1 1 0 102 0 1 1 0 00-2 0zm6 1a1 1 0 100-2 1 1 0 000 2z"/>
                             </svg>
@@ -729,57 +729,23 @@ nav.scrolled .nav-scrolled\:text-black {
     <script>
         // Navbar scroll effect
         window.addEventListener('scroll', function() {
-    const nav = document.getElementById('mainNav');
-    if (window.scrollY > 50) {
-        nav.classList.add('scrolled');
-    } else {
-        nav.classList.remove('scrolled');
-    }
-    });
-
-    function smoothScroll() {
-        const productsSection = document.getElementById('products');
-        productsSection.scrollIntoView({ 
-        behavior: 'smooth' 
-        });
-    }
-    function initializeCart() {
-            let userId = "{{ auth()->id() ?? 'guest' }}";
-            let cartKey = `cart_${userId}`;
-            
-            if (!localStorage.getItem(cartKey)) {
-                localStorage.setItem(cartKey, JSON.stringify({}));
-            }
-        }
-
-        function addToCart(productId, productName, productPrice, productImage = null) {
-            @if(!auth()->check())
-                window.location.href = "{{ route('login') }}";
-                return;
-            @endif
-
-            let userId = "{{ auth()->id() ?? 'guest' }}";
-            let cartKey = `cart_${userId}`;
-            let cart = JSON.parse(localStorage.getItem(cartKey)) || {};
-            
-            if (cart[productId]) {
-                cart[productId].quantity += 1;
+            const nav = document.getElementById('mainNav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
             } else {
-                cart[productId] = {
-                    id: productId,
-                    name: productName,
-                    price: productPrice,
-                    image: productImage,
-                    quantity: 1
-                };
+                nav.classList.remove('scrolled');
             }
-            
-            localStorage.setItem(cartKey, JSON.stringify(cart));
-            updateCartCount();
-            showNotification(`${productName} added to cart!`);
+        });
+
+        function smoothScroll() {
+            const productsSection = document.getElementById('products');
+            productsSection.scrollIntoView({ 
+                behavior: 'smooth' 
+            });
         }
 
-        function updateCartCount() {
+        function handleCartClick(event) {
+            event.preventDefault();
             let userId = "{{ auth()->id() ?? 'guest' }}";
             let cartKey = `cart_${userId}`;
             let cart = JSON.parse(localStorage.getItem(cartKey)) || {};
@@ -789,15 +755,25 @@ nav.scrolled .nav-scrolled\:text-black {
                 totalItems += cart[productId].quantity;
             }
             
-            const cartCountElement = document.getElementById('cart-count');
-            if (cartCountElement) {
-                cartCountElement.textContent = totalItems;
+            if (totalItems === 0) {
+                showNotification('Votre panier est vide');
+            } else {
+                window.location.href = "{{ route('cart') }}";
+            }
+        }
+
+        function initializeCart() {
+            let userId = "{{ auth()->id() ?? 'guest' }}";
+            let cartKey = `cart_${userId}`;
+            
+            if (!localStorage.getItem(cartKey)) {
+                localStorage.setItem(cartKey, JSON.stringify({}));
             }
         }
 
         function showNotification(message) {
             const notification = document.createElement('div');
-            notification.className = 'fixed bottom-4 right-4 bg-teal-600 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-10 opacity-0 transition-all duration-300';
+            notification.className = 'fixed bottom-4 right-4 bg-[#886666] text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-10 opacity-0 transition-all duration-300';
             notification.textContent = message;
             document.body.appendChild(notification);
             
